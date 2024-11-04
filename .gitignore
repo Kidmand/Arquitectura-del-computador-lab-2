@@ -1,0 +1,7 @@
+quemu-test/.gdb_history
+quemu-test/kernel.img
+quemu-test/main.elf
+quemu-test/main.hex
+quemu-test/main.list
+quemu-test/main.o
+quemu-test/memory_map.txt
