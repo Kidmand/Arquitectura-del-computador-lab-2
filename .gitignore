@@ -5,3 +5,8 @@ quemu-test/main.hex
 quemu-test/main.list
 quemu-test/main.o
 quemu-test/memory_map.txt
+sim.log
+benchmarks/*.img
+scripts/__pycache__/*
+/se_results/*
+.venv
