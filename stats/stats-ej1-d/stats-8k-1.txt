@@ -1,0 +1,8 @@
+cache 8k
+vias 1
+
+system.cpu_cluster.cpus.numCycles                                      218302.0
+system.cpu_cluster.cpus.dcache.overallHits::total                      698.0
+system.cpu_cluster.cpus.dcache.ReadReq.hits::total                     470.0
+system.cpu_cluster.cpus.icache.overallHits::total                      16427.0
+system.cpu_cluster.cpus.idleCycles                                     129841.0
