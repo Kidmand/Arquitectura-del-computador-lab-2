@@ -1,3 +1,6 @@
+cache 8k
+vias 2
+
 simInsts                                                               32773.0
 system.cpu_cluster.cpus.numCycles                                      189255.0
 system.cpu_cluster.cpus.cpi                                            5.77
