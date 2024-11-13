@@ -5,7 +5,7 @@
 	.bss 
 	X: .zero  32768        // vector X(4096)*8
 	Y: .zero  32768        // Vector Y(4096)*8
-        Z: .zero  32768        // Vector Y(4096)*8
+    Z: .zero  32768        // Vector Y(4096)*8
 
 	.arch armv8-a
 	.text
@@ -25,43 +25,45 @@ main:
 	bl	m5_dump_stats
 
 	ldr     x0, N
-    	ldr     x10, =Alpha
-    	ldr     x2, =X
-    	ldr     x3, =Y
+    ldr     x10, =Alpha
+    ldr     x2, =X
+    ldr     x3, =Y
 	ldr     x4, =Z
 
 //---------------------- CODE HERE ------------------------------------
 
-	ldr X5, [x10]    // D0 = alpha
-	scvtf D0, x5     // pasamos alpha a flotante
-	ADD X5, XZR, XZR // indice*8
-//	asr x0, x0, #1   // Dividir N entre 2, ya que procesamos dos elementos por iteración
-/*loop:
-	ldr D1, [X2, X5] // D1 = X[i]
-	ldr D2, [X3, X5] // D2 = Y[i]
-	FMUL D3, D1, D0  // D3 = X[i] * alpha
-	FADD D4, D3, D2  // D4 = (X[i] * alpha) + Y[i]
-	str D4, [X4, X5] // Z[i] = (X[i] * alpha) + Y[i]
-	ADD X5, X5, #8
-	SUB x0, x0, #1
-	CBNZ x0, loop
-*/
+    /* CODIGO de DAXPY:
+    const int N;
+    double X[N], Y[N], Z[N], alpha;
+    for (int i = 0; i < N; ++i)
+    {
+        Z[i] = alpha * X[i] + Y[i];
+    }
+    */
 
+    // Como alpha es un escalar, lo cargamos
+    // en un registro de punto flotante:
+    ldr x5, [x10]
+    scvtf d0, x5    
+
+    mov x5, 0 // i = 0
+    mov x6, 0 // x6 = 0
 loop:
-	ldr     d1, [x2, x5]         // Cargar X[i] en D1
-	ldr     d2, [x3, x5]         // Cargar Y[i] en D2
-	fmul    d3, d1, d0           // D3 = X[i] * Alpha
-	fadd    d4, d3, d2           // D4 = (X[i] * Alpha) + Y[i]
-	str     d4, [x4, x5]         // Guardar resultado en Z[i]
-	ADD     x5, x5, #8           // Avanzar índice en 8 bytes (1 elemento de 8 bytes)
-	ldr     d1, [x2, x5]         // Cargar X[i+1] en D1
-	ldr     d2, [x3, x5]         // Cargar Y[i+1] en D2
-	fmul    d3, d1, d0           // D3 = X[i+1] * Alpha
-	fadd    d4, d3, d2           // D4 = (X[i+1] * Alpha) + Y[i+1]
-	str     d4, [x4, x5]         // Guardar resultado en Z[i+1]
-	add     x5, x5, #8           // Avanzar índice en 16 bytes (2 elementos de 8 bytes cada uno)
-	subs    x0, x0, #2           // Decrementar contador de iteraciones (N)
-	b.gt    loop                 // Saltar de nuevo al inicio del bucle si x0 > 0
+    cmp x5, x0 
+    b.ge end   // if i >= N, end
+
+    ldr d1, [x2, x6] // d1 = X[i]
+    ldr d2, [x3, x6] // d2 = Y[i]
+
+    fmul d3, d0, d1 // d3 = alpha * X[i]
+    fadd d3, d3, d2 // d3 = alpha * X[i] + Y[i]
+
+    str d3, [x4, x6] // Z[i] = alpha * X[i] + Y[i]
+
+    add x5, x5, 1 // i++
+    add x6, x6, 8 // x6 += 8
+    b loop
+end:
 
 //---------------------- END CODE -------------------------------------
 
