@@ -53,11 +53,11 @@ loop:
     fadd d3, d3, d2 // d3 = alpha * X[i] + Y[i]
     str d3, [x4, #0] // Z[i] = alpha * X[i] + Y[i]
 
-    ldr d1, [x2, #8] // d1 = X[i]
-    ldr d2, [x3, #8] // d2 = Y[i]
-    fmul d3, d0, d1 // d3 = alpha * X[i]
-    fadd d3, d3, d2 // d3 = alpha * X[i] + Y[i]
-    str d3, [x4, #8] // Z[i] = alpha * X[i] + Y[i]
+    ldr d4, [x2, #8] // d4 = X[i]
+    ldr d5, [x3, #8] // d5 = Y[i]
+    fmul d6, d0, d4 // d6 = alpha * X[i]
+    fadd d6, d6, d5 // d6 = alpha * X[i] + Y[i]
+    str d6, [x4, #8] // Z[i] = alpha * X[i] + Y[i]
 
     add x2, x2, 16 // X[] += 16
     add x3, x3, 16 // Y[] += 16
