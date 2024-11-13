@@ -13,21 +13,51 @@
 Codigo:
 
 ```asm
-    ldr X5, [x10]    // D0 = alpha
-    scvtf D0, x5     // pasamos alpha a flotante
-    ADD X5, XZR, XZR // indice*8
-    SUB x0, x0, #1
+    ldr x5, [x10]
+    scvtf d0, x5    
+
+    mov x5, 0 // i = 0
+    mov x6, 0 // x6 = 0
 loop:
-    ldr D1, [X2, X5] // D1 = X[i]
-    ldr D2, [X3, X5] // D2 = Y[i]
-    FMUL D3, D1, D0  // D3 = X[i] * alpha
-    FADD D4, D3, D2  // D4 = (  [i] * alpha) + Y[i]
-    str D4, [X4, X5] // Z[i] = (    [i] * alpha) + Y[i]
-    ADD X5, X5, #8
-    SUB x0, x0, #1
-    CBNZ x0, loop
+    cmp x5, x0 
+    b.ge end   // if i >= N, end
+
+    ldr d1, [x2, x6] // d1 = X[i]
+    ldr d2, [x3, x6] // d2 = Y[i]
+
+    fmul d3, d0, d1 // d3 = alpha * X[i]
+    fadd d3, d3, d2 // d3 = alpha * X[i] + Y[i]
+
+    str d3, [x4, x6] // Z[i] = alpha * X[i] + Y[i]
+
+    add x5, x5, 1 // i++
+    add x6, x6, 8 // x6 += 8
+    b loop
+end:
 ```
 
 Tenemos:
 
-- Las estadisticas no cambian segun el tamano de cache
+- Graficos Dcahe Hits y Dcache remplacements inversamente proporcionales.(+remplazos --> -hits)
+- Mas hits totales que de lectura porque tenemos de escritura de Z.
+- Con 2 vias no se notan los hits de escritura ¿ya que siempre se reemplazan?.
+- Graficos de cantidad de stalls y numero de ciclos proporcionales. (+stall -->  +cilos)
+- Hacer grafico de numero de ciclos - cantidad de stalls (decrece)
+- El tamaño de cache no influye ya que no se vuelven a leer los datos de los arreglos.
+- Un array entero tiene 32KB = 4096 * 8B
+- Una linea de cache tiene 64B
+
+Como se vera en cada grafico, las estadisticas no cambian segun el tamaño de la cache.
+En nuestro programa, accedemos (lectura/escritura) secuencialmente a los datos de los arreglos solo una vez cada uno. Por lo tanto no volveremos a necesitar un bloque al que ya hemos accedido entero, entonces, no hace falta que persistan en cache ya que no lo volveremos a necesitar. Por lo tanto aumentar el tamaño de cache no surtira nigun efecto en nuestras estadisticas. Hacerlo nos permitiria guardar mas bloques, pero no nos hace falta ya que  nosotros solo necesitamos guardar uno por arreglo.
+
+Aunque el tamaño de cache de datos no nos afecta, la cantidad de vias si. Asi como en el siguiente caso de analisis:
+
+Al considerar la cantidad de ciclos/clocks del programa, podemos ver que al variar la cantidad de vias tenemos diferentes resultados.
+
+Antes notar algo que sucede por el tamaño del arreglo en relacion al tamaño de la cache. El arreglo tiene 4096 elementos de 8 bytes, es decir ocupa 32kB y por como estan inicializados los arreglos en memoria ram, estos se encuentran uno seguido al otro, es decir esta primero el arreglo X, luego el arreglo Y, y finalmente el Z. Como los tamaños de cache son multiplos de 32kB (son de 8kb, 16kB, y 32kB).
+Anlaisando el caso de una sola via, tenemos que un elemento del arreglo X y  un elmento del arreglo Y caen justamente en la misma linea, por lo explicado anteriormente (ie como esta organizada la memoria). Lo mismo pasa con el arrego Z, entonces se pisan siempre las lineas de cache.
+
+![Ciclos Simulados](<stats/stats-ej1-img/Ciclos Simulados.png>)
+![Ciclos de CPU en Stall](<stats/stats-ej1-img/Ciclos de CPU en Stall.png>)
+![Dcache Hits](<stats/stats-ej1-img/Dcache Hits.png>)
+![Dcache ReadReq Hits](<stats/stats-ej1-img/Dcache ReadReq Hits.png>)
