@@ -58,17 +58,35 @@ loop:
     fadd d3, d3, d2      // d3 = alpha * X[i] + Y[i]
     str d3, [x4, x6]     // Z[i] = alpha * X[i] + Y[i]
 
-    add x6, x6, #8        // x6 += 8
+    add x6, x6, #8       // x6 += 8
 
-    ldr d4, [x2, x6]     // d1 = X[i+1]
-    ldr d5, [x3, x6]     // d2 = Y[i+1]
+    ldr d4, [x2, x6]     // d4 = X[i+1]
+    ldr d5, [x3, x6]     // d5 = Y[i+1]
 
-    fmul d6, d0, d4      // d3 = alpha * X[i+1]
-    fadd d6, d6, d5      // d3 = alpha * X[i+1] + Y[i+1]
+    fmul d6, d0, d4      // d6 = alpha * X[i+1]
+    fadd d6, d6, d5      // d6 = alpha * X[i+1] + Y[i+1]
     str d6, [x4, x6]     // Z[i+1] = alpha * X[i+1] + Y[i+1]
 
-    add x5, x5, #2        // i++
-    add x6, x6, #8        // x6 += 8
+    add x6, x6, #8       // x6 += 8
+
+    ldr d7, [x2, x6]     // d7 = X[i+2]
+    ldr d8, [x3, x6]     // d8 = Y[i+2]
+
+    fmul d9, d0, d7      // d9 = alpha * X[i+2]
+    fadd d9, d9, d8      // d9 = alpha * X[i+2] + Y[i+2]
+    str d9, [x4, x6]     // Z[i+2] = alpha * X[i+2] + Y[i+2]
+
+    add x6, x6, #8       // x6 += 8
+
+    ldr d10, [x2, x6]    // d10 = X[i+3]
+    ldr d11, [x3, x6]    // d11 = Y[i+3]
+
+    fmul d12, d0, d10    // d12 = alpha * X[i+3]
+    fadd d12, d12, d11   // d12 = alpha * X[i+3] + Y[i+3]
+    str d12, [x4, x6]    // Z[i+3] = alpha * X[i+3] + Y[i+3]
+
+    add x6, x6, #8       // x6 += 8
+    add x5, x5, #4       // i++
     b loop
 end:
 
