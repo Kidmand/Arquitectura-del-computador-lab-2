@@ -36,19 +36,15 @@ loop:
 end:
 ```
 
-Tenemos:
-
-- Gráficos Dcahe Hits y Dcache remplacements inversamente proporcionales.(+remplazos --> -hits)
-- Mas hits totales que de lectura porque tenemos de escritura de Z.
-- Con 2 vias no se notan los hits de escritura ¿ya que siempre se reemplazan?.
-- Gráficos de cantidad de stalls y numero de ciclos proporcionales. (+stall -->  +cilos)
-- Hacer gráfico de numero de ciclos - cantidad de stalls (decrece)
+<!-- TODO:
+- Gráficos de cantidad de stalls y numero de ciclos proporcionales. (+stall -> +cilos)
 - El tamaño de cache no influye ya que no se vuelven a leer los datos de los arreglos.
 - Un array entero tiene 32KB = 4096 * 8B
-- Una linea de cache tiene 64B
+- Una linea de cache tiene 64B 
+-->
 
 Como se vera en cada gráfico, las estadísticas no cambian según el tamaño de la cache.
-En nuestro programa, accedemos (lectura/escritura) secuencialmente a los datos de los arreglos solo una vez cada uno. Por lo tanto no volveremos a necesitar un bloque al que ya hemos accedido entero, entonces, no hace falta que persistan en cache ya que no lo volveremos a necesitar. Por lo tanto aumentar el tamaño de cache no surtirá nigun efecto en nuestras estadísticas. Hacerlo nos permitiría guardar mas bloques, pero no nos hace falta ya que  nosotros solo necesitamos guardar uno por arreglo.
+Esto es asi ya que en nuestro programa, accedemos (lectura/escritura) secuencialmente a los datos de los arreglos solo una vez cada uno. Por lo tanto no volveremos a necesitar un bloque al que ya hemos accedido entero, entonces, no hace falta que persistan en cache ya que no lo volveremos a necesitar. Por lo tanto aumentar el tamaño de cache no surtirá nigun efecto en nuestras estadísticas. Hacerlo nos permitiría guardar mas bloques, pero no nos hace falta ya que  nosotros solo necesitamos guardar uno por arreglo.
 
 Aunque el tamaño de cache de datos no nos afecta, la cantidad de vias si. Así como en el siguiente caso de análisis:
 
@@ -62,14 +58,20 @@ Notar, la mejor al tener 2 vias. Gracias a ellas tenemos que las lineas no se pi
 
 ![Ciclos de CPU en Stall](<stats/stats-ej1-img/Ciclos de CPU en Stall.png>)
 
-Y notar que justamente la cantidad de stalls es inversamente proporcional a la cantidad de ciclos totales de la simulación.
+Y notar que justamente el cambio al variar el numero de vias es proporcional en la cantidad de stalls y la cantidad de ciclos totales de la simulación.
 
-FIXME: Notar que hay un comportamiento raro con la cache de 4 vias, debería ser igual al comportamiento del de 2 vias e igual con el de 8 vias.
+<!-- FIXME: Notar que hay un comportamiento raro con la cache de 4 y 8 vias, debería seguir el comportamiento del de 2 vias con respecto al de 1 via.
+-->
 
-Notar que todo lo anterior se relaciona con la cantidad de hits, en el caso del de 1 via podemos ver en los gráficos que tenemos pocos.
+<!-- TODO:
+- Mas hits totales que de lectura porque tenemos de escritura de Z.
+- Con 2 vias no se notan los hits de escritura ¿ya que siempre se reemplazan?.
+-->
+
+Notar que todo lo anterior se relaciona con la cantidad de hits. En el caso del de 1 via podemos ver en los gráficos que tenemos pocos.
 
 ![Dcache Hits](<stats/stats-ej1-img/Dcache Hits.png>)
 ![Dcache ReadReq Hits](<stats/stats-ej1-img/Dcache ReadReq Hits.png>)
 
 Específicamente tenemos valores que entran en el rango de error de la simulación, pero deberían ser 0, ya que siempre se remplazan las lineas. Luego para el caso de 2 vias, vemos como mejora la cantidad de hits porque justamente no tenemos los reemplazos de linea.
-TODO: COMPLETAR PARA CASO DE 4 Y 8 VIAS ...
+<!-- TODO: COMPLETAR PARA CASO DE 4 Y 8 VIAS ... -->
