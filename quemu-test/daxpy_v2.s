@@ -31,11 +31,9 @@
     /* CODIGO de DAXPY:
     const int N;
     double X[N], Y[N], Z[N], alpha;
-    // Pre: N es par y mayor a 2
-    for (int i = 0; i < N/2; i+=2)
+    for (int i = 0; i < N; ++i)
     {
         Z[i] = alpha * X[i] + Y[i];
-        Z[i+1] = alpha * X[i+1] + Y[i+1];
     }
     */
 

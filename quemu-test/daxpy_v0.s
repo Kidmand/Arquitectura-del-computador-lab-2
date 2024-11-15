@@ -39,35 +39,25 @@
 
     // Como alpha es un escalar, lo cargamos
     // en un registro de punto flotante:
-    ldr x9, [x10]
-    scvtf d0, x9    
+    ldr x5, [x10]
+    scvtf d0, x5    
 
-    mov x5, 0   // i = 0
-    mov x6, 0   // x6 = 0
-    
+    mov x5, 0 // i = 0
+    mov x6, 0 // x6 = 0
 loop:
-    cmp x5, x0           // Comparar i con N
-    b.ge end             // If i >= N, end
+    cmp x5, x0 
+    b.ge end   // if i >= N, end
 
-    ldr d1, [x2, x6]     // d1 = X[i]
-    ldr d2, [x3, x6]     // d2 = Y[i]
+    ldr d1, [x2, x6] // d1 = X[i]
+    ldr d2, [x3, x6] // d2 = Y[i]
 
-    fmul d3, d0, d1      // d3 = alpha * X[i]
-    fadd d3, d3, d2      // d3 = alpha * X[i] + Y[i]
-    str d3, [x4, x6]     // Z[i] = alpha * X[i] + Y[i]
+    fmul d3, d0, d1 // d3 = alpha * X[i]
+    fadd d3, d3, d2 // d3 = alpha * X[i] + Y[i]
 
-    add x6, x6, #8        // x6 += 8
+    str d3, [x4, x6] // Z[i] = alpha * X[i] + Y[i]
 
-    ldr d4, [x2, x6]     // d4 = X[i+1]
-    ldr d5, [x3, x6]     // d5 = Y[i+1]
-
-    fmul d6, d0, d4      // d6 = alpha * X[i+1]
-    fadd d6, d6, d5      // d6 = alpha * X[i+1] + Y[i+1]
-    str d3, [x4, x6]     // Z[i+1] = alpha * X[i+1] + Y[i+1]
-
-    add x5, x5, #2        // i++
-    add x6, x6, #8        // x6 += 8
-
+    add x5, x5, 1 // i++
+    add x6, x6, 8 // x6 += 8
     b loop
 end:
 
