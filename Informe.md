@@ -43,8 +43,8 @@ end:
 - Una linea de cache tiene 64B
 -->
 
-Como se vera en cada gráfico, las estadísticas no cambian según el tamaño de la cache.
-Esto es así ya que en nuestro programa, accedemos (lectura/escritura) secuencialmente a cada uno de los elementos de los arreglos. Por lo tanto no volveremos a necesitar un bloque al que ya hemos accedido entero, entonces, no hace falta que persistan en cache ya que no lo volveremos a necesitar. Por lo tanto aumentar el tamaño de cache no surtirá ningún efecto en nuestras estadísticas. Hacerlo nos permitiría guardar mas bloques, pero no nos hace falta ya que nosotros solo necesitamos guardar uno a la vez por arreglo.
+Como se verá en cada gráfico, las estadísticas no cambian según el tamaño de la cache.
+Esto es así ya que en nuestro programa, accedemos (lectura/escritura) secuencialmente a cada uno de los elementos de los arreglos. Por lo tanto no volveremos a necesitar un bloque al que ya hemos accedido entero, entonces, no hace falta que persistan en cache ya que no lo volveremos a necesitar. Por lo tanto aumentar el tamaño de cache no surtirá ningún efecto en nuestras estadísticas. Hacerlo nos permitiría guardar más bloques, pero no nos hace falta ya que nosotros solo necesitamos guardar uno a la vez por arreglo (por decirlo de otra manera, podríamos usar solo una línea de la cache por arreglo e ir almacenando los bloques ahí continuadamente dado que accedemos secuencialmente al arreglo como se mencionó anteriormente).
 
 Aunque el tamaño de cache de datos no nos afecta, la cantidad de vias si. Así como en los siguientes casos de análisis.
 
@@ -52,17 +52,17 @@ Al considerar la cantidad de ciclos/clocks del programa, podemos ver que al vari
 
 ![Ciclos Simulados](<stats/stats-ej1-img/Ciclos Simulados.png>)
 
-Como podemos notar, al tener 2 vias mejora el rendimiento en cuanto a la cantidad de ciclos simulados.
-Pero, ¿por que el rendimiento es peor con una sola via?
+Como podemos notar, al tener 2 vías mejora el rendimiento en cuanto a la cantidad de ciclos simulados.
+Pero, ¿Por qué el rendimiento es peor con una sola vía?
 Esto es así ya que:
 
 - Cada arreglo tiene 4096 elementos de 8 bytes, es decir cada uno ocupa 32kB,
-- Por como están inicializados los arreglos en memoria ram, estos se encuentran uno seguido al otro, es decir esta primero el arreglo X, luego el arreglo Y, y finalmente el Z.
-- Como los tamaños de cache son múltiplos de 32kB (son de 8kB, 16kB, y 32kB), analizando el caso de una sola via, tenemos que cada i-esimo elemento del arreglo X,Y y Z caen justamente en la misma linea, pisando siempre el bloque traído por el anterior arreglo.
+- Por como están inicializados los arreglos en memoria ram, estos se encuentran uno seguido al otro, es decir está primero el arreglo X, luego el arreglo Y, y finalmente el Z.
+- Como los tamaños de cache son múltiplos de 32kB (son de 8kB, 16kB, y 32kB), analizando el caso de una sola vía, tenemos que cada i-esimo elemento del arreglo X,Y y Z caen justamente en la misma linea, pisando siempre el bloque traído por el anterior arreglo.
 
 Ahora, ¿por que el rendimiento es mejor con dos vias?
 Aunque parezca que debería mejorar siempre, no es así, ya que depende de la política de reemplazo de la cache.
-Por ejemplo, si la política es reemplazar el bloque mas viejo, pasaría lo siguiente:
+Por ejemplo, si la política es reemplazar el bloque más viejo, pasaría lo siguiente:
 
 | Buscamos un bloque de | Arrays cacheados |
 | --------------------- | ---------------- |
@@ -86,36 +86,37 @@ En cambio si la política es reemplazar el bloque mas nuevo:
 | de Z (Miss)           | X, Z             |
 
 Como podemos ver, acceder a X siempre daría Hit luego de traer por primera vez cada bloque correspondiente ya que nunca se lo reemplazaría.
-Como tenemos mejoras con dos vias, podemos inferir que la política de reemplazo tiene un efecto similar al segundo caso.
+Como tenemos mejoras con dos vías, podemos inferir que la política de reemplazo tiene un efecto similar al segundo caso.
 
-A su vez podemos notar que la cantidad de ciclos totales de la simulación esta correlacionada con la cantidad de stalls:
+A su vez podemos notar que la cantidad de ciclos totales de la simulación está correlacionada con la cantidad de stalls:
 
 ![Ciclos de CPU en Stall](<stats/stats-ej1-img/Ciclos de CPU en Stall.png>)
 
 Esto es así ya que el tiempo que se tarda en traer datos de memoria principal puede llegar a ocupar varios ciclos de clock, en los que si no hay ninguna instrucción que se pueda procesar, se stolleara el micro. Por lo tanto si ocurren mas hits en cache se traerán los datos en menos tiempo, osea en menos ciclos de clock, y por lo tanto habrá menor cantidad de ciclos de CPU inactivos/stolleados.
 
-Notar que hay un comportamiento raro con la cache de 4 y 8 vias, las graficas no representan lo que esperamos. Pero vamos a contar lo que esperabamos igualmente. Lo que deberia pasar con 4 vias es que se reduzcan la cantinda de ciclos simulados ya que se reducen los reemplazos de bloques. Tenemos 3 arreglos, dos que leemos y 1 que escribimos de forma secuencial y en bucle en nuestro programa, por lo tanto deberíamos tener mas hits en cache de datos al aumentar la cantidad de vias a 4. Y por ello la cantidad de ciclos simulados debería disminuir. Luego con 8 vias deberia mantenerse igual que con 4 vias, ya que solo necesitamos 3 bloques en cache por como es nuestro programa.
+Notar que hay un comportamiento raro con la cache de 4 y 8 vías, las gráficas no representan lo que esperamos. Pero vamos a contar lo que esperabamos igualmente. Lo que debería pasar con 4 vías es que se reduzcan la cantinda de ciclos simulados ya que se reducen los reemplazos de bloques. Tenemos 3 arreglos, dos que leemos y 1 que escribimos de forma secuencial y en bucle en nuestro programa, por lo tanto deberíamos tener más hits en cache de datos al aumentar la cantidad de vías a 4. Y por ello la cantidad de ciclos simulados debería disminuir. Luego con 8 vías debería mantenerse igual que con 4 vías, ya que solo necesitamos 3 bloques en cache por como es nuestro programa.
+La otra parte rara es que los gráficos tanto de los stall y hits están inversamente correlacionados, es decir que a más hits esperaríamos menos stall, pero eso no se ve contemplado en los gráficos, de hecho lo que se ve es todo lo contrario.
 
 <!-- TODO:
 - Mas hits totales que de lectura porque tenemos de escritura de Z.
 - Con 2 vias no se notan los hits de escritura ¿ya que siempre se reemplazan?.
 -->
 
-Como dijimos, en nuestro caso, deberían aumentar los hits en cache de datos al aumentar las vias. Y por lo tanto estar la cantidad de ciclos simulados y ciclos inactivos inversamente correlacionados con la cantidad de hits en cache de datos.
+Como dijimos, en nuestro caso, deberían aumentar los hits en cache de datos al aumentar las vías. Y por lo tanto estar la cantidad de ciclos simulados y ciclos inactivos inversamente correlacionados con la cantidad de hits en cache de datos.
 
 ![Dcache Hits](<stats/stats-ej1-img/Dcache Hits.png>)
 
-Como podemos ver, se cumplió lo que dijimos en el caso de 1 y 2 vias.
+Como podemos ver, se cumplió lo que dijimos en el caso de 1 y 2 vías.
 
-Para el caso de 4 y 8 vias, vemos como aumenta la cantidad de hits, algo que esperabamos al tener mas vías y por como es nuestro programa, 3 arreglos, dos que leemos y 1 que escribimos y todo esto en un bucle. Exprimiendo al maximo la cache de datos.
+Para el caso de 4 y 8 vías, vemos como aumenta la cantidad de hits, algo que esperabamos al tener mas vías y por como es nuestro programa, 3 arreglos, dos que leemos y 1 que escribimos y todo esto en un bucle. Exprimiendo al máximo la cache de datos.
 
-Recordando lo que dijimos antes, con 1 via hay constantes reemplazos, por lo tanto no deberíamos tener hits mas que los valores que entran en el rango de error de la simulación. Lo que en cierta medida se cumple.
-Luego para el caso de 2 vias, vemos como mejora la cantidad de hits porque justamente disminuyen los reemplazos de bloques.
+Recordando lo que dijimos antes, con 1 vía hay constantes reemplazos, por lo tanto no deberíamos tener hits más que los valores que entran en el rango de error de la simulación. Lo que en cierta medida se cumple.
+Luego para el caso de 2 vías, vemos como mejora la cantidad de hits porque justamente disminuyen los reemplazos de bloques.
 
-Pero, ¿cuantos hits son de escritura y lectura?
+Pero, ¿cuántos hits son de escritura y lectura?
 
 ![Dcache ReadReq Hits](<stats/stats-ej1-img/Dcache ReadReq Hits.png>)
 
 Como podemos observar, la cantidad de hits de lectura es mayor a la de escritura en todos los casos.
 Aproximadamente entre un 3.5% es de escritura, lo que concuerda con la proporción de nuestro código (leemos en X e Y y escribimos solo en Z).
-Salvo con 2 vias donde la mayoría de los hits son de lectura. Esto es posible que sea por lo dicho anteriormente sobre la política de reemplazo de la cache. Si al haber 2 vias, se reemplazan siempre los bloques Z e Y entre si por ejemplo, entonces tendríamos este efecto.
+Salvo con 2 vías donde la mayoría de los hits son de lectura. Esto es posible que sea por lo dicho anteriormente sobre la política de reemplazo de la cache. Si al haber 2 vías, se reemplazan siempre los bloques Z e Y entre si por ejemplo, entonces tendríamos este efecto.
