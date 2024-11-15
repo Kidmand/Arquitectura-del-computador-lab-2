@@ -1,0 +1,36 @@
+cache "out of order"
+
+simInsts                                                               32784.0
+system.cpu_cluster.cpus.numCycles                                      37238.0
+system.cpu_cluster.cpus.cpi                                            1.14
+system.cpu_cluster.cpus.branchPred.lookups                             4108.0
+system.cpu_cluster.cpus.branchPred.condPredicted                       2051.0
+system.cpu_cluster.cpus.branchPred.condIncorrect                       4.0
+system.cpu_cluster.cpus.branchPred.BTBLookups                          2055.0
+system.cpu_cluster.cpus.branchPred.BTBUpdates                          4.0
+system.cpu_cluster.cpus.branchPred.BTBHits                             2050.0
+system.cpu_cluster.cpus.commitStats0.committedInstType::IntAlu         12297.0
+system.cpu_cluster.cpus.commitStats0.committedInstType::IntMult        0.0
+system.cpu_cluster.cpus.commitStats0.committedInstType::IntDiv         0.0
+system.cpu_cluster.cpus.commitStats0.committedInstType::FloatAdd       4096.0
+system.cpu_cluster.cpus.commitStats0.committedInstType::FloatCmp       0.0
+system.cpu_cluster.cpus.commitStats0.committedInstType::FloatCvt       1.0
+system.cpu_cluster.cpus.commitStats0.committedInstType::FloatMult      4096.0
+system.cpu_cluster.cpus.commitStats0.committedInstType::MemRead        8198.0
+system.cpu_cluster.cpus.commitStats0.committedInstType::MemWrite       4096.0
+system.cpu_cluster.cpus.dcache.overallHits::total                      4513.0
+system.cpu_cluster.cpus.dcache.overallMisses::total                    7783.0
+system.cpu_cluster.cpus.dcache.overallAccesses::total                  12296.0
+system.cpu_cluster.cpus.dcache.replacements                            1194.0
+system.cpu_cluster.cpus.dcache.ReadReq.hits::total                     4174.0
+system.cpu_cluster.cpus.dcache.ReadReq.accesses::total                 8200.0
+system.cpu_cluster.cpus.dcache.WriteReq.hits::total                    339.0
+system.cpu_cluster.cpus.dcache.WriteReq.accesses::total                4096.0
+system.cpu_cluster.cpus.icache.overallHits::total                      8212.0
+system.cpu_cluster.cpus.icache.overallMisses::total                    3.0
+system.cpu_cluster.cpus.icache.overallAccesses::total                  8215.0
+system.cpu_cluster.cpus.icache.replacements                            0.0
+system.cpu_cluster.l2.overallMisses::total                             480.0
+system.cpu_cluster.l2.overallAccesses::total                           1543.0
+system.cpu_cluster.l2.replacements                                     0.0
+system.cpu_cluster.cpus.idleCycles                                     215.0
