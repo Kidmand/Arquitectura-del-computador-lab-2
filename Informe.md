@@ -37,20 +37,20 @@ end:
 ```
 
 <!-- TODO:
-- Gráficos de cantidad de stalls y numero de ciclos proporcionales. (+stall -> +cilos)
+- Gráficos de cantidad de stalls y numero de ciclos correlacionados. (+stall -> +cilos)
 - El tamaño de cache no influye ya que no se vuelven a leer los datos de los arreglos.
 - Un array entero tiene 32KB = 4096 * 8B
 - Una linea de cache tiene 64B 
 -->
 
 Como se vera en cada gráfico, las estadísticas no cambian según el tamaño de la cache.
-Esto es asi ya que en nuestro programa, accedemos (lectura/escritura) secuencialmente a los datos de los arreglos solo una vez cada uno. Por lo tanto no volveremos a necesitar un bloque al que ya hemos accedido entero, entonces, no hace falta que persistan en cache ya que no lo volveremos a necesitar. Por lo tanto aumentar el tamaño de cache no surtirá nigun efecto en nuestras estadísticas. Hacerlo nos permitiría guardar mas bloques, pero no nos hace falta ya que  nosotros solo necesitamos guardar uno por arreglo.
+Esto es así ya que en nuestro programa, accedemos (lectura/escritura) secuencialmente a los datos de los arreglos solo una vez cada uno. Por lo tanto no volveremos a necesitar un bloque al que ya hemos accedido entero, entonces, no hace falta que persistan en cache ya que no lo volveremos a necesitar. Por lo tanto aumentar el tamaño de cache no surtirá nigun efecto en nuestras estadísticas. Hacerlo nos permitiría guardar mas bloques, pero no nos hace falta ya que  nosotros solo necesitamos guardar uno por arreglo.
 
 Aunque el tamaño de cache de datos no nos afecta, la cantidad de vias si. Así como en el siguiente caso de análisis:
 
 Al considerar la cantidad de ciclos/clocks del programa, podemos ver que al variar la cantidad de vias tenemos diferentes resultados.
 
-Antes notar algo que sucede por el tamaño del arreglo en relación al tamaño de la cache. El arreglo tiene 4096 elementos de 8 bytes, es decir cada uno ocupa 32kB y por como están inicializados los arreglos en memoria ram, estos se encuentran uno seguido al otro, es decir esta primero el arreglo X, luego el arreglo Y, y finalmente el Z. Como los tamaños de cache son multiplos de 32kB (son de 8kb, 16kB, y 32kB), analisando el caso de una sola via, tenemos que un elemento del arreglo X y un elmento del arreglo Y caen justamente en la misma linea, por lo explicado anteriormente (ie como esta organizada la memoria). Lo mismo pasa con el arrego Z, entonces se pisan siempre las lineas de cache. Veamos esto en el gráfico:
+Antes notar algo que sucede por el tamaño del arreglo en relación al tamaño de la cache. El arreglo tiene 4096 elementos de 8 bytes, es decir cada uno ocupa 32kB y por como están inicializados los arreglos en memoria ram, estos se encuentran uno seguido al otro, es decir esta primero el arreglo X, luego el arreglo Y, y finalmente el Z. Como los tamaños de cache son múltiplos de 32kB (son de 8kb, 16kB, y 32kB), analizando el caso de una sola via, tenemos que un elemento del arreglo X y un elemento del arreglo Y caen justamente en la misma linea, por lo explicado anteriormente (ie como esta organizada la memoria). Lo mismo pasa con el arrego Z, entonces se pisan siempre las lineas de cache. Veamos esto en el gráfico:
 
 ![Ciclos Simulados](<stats/stats-ej1-img/Ciclos Simulados.png>)
 
@@ -58,7 +58,7 @@ Notar, la mejor al tener 2 vias. Gracias a ellas tenemos que las lineas no se pi
 
 ![Ciclos de CPU en Stall](<stats/stats-ej1-img/Ciclos de CPU en Stall.png>)
 
-Y notar que justamente el cambio al variar el numero de vias es proporcional en la cantidad de stalls y la cantidad de ciclos totales de la simulación.
+Y notar que justamente el cambio al variar el numero de vias esta correlacionado en la cantidad de stalls y la cantidad de ciclos totales de la simulación.
 
 <!-- FIXME: Notar que hay un comportamiento raro con la cache de 4 y 8 vias, debería seguir el comportamiento del de 2 vias con respecto al de 1 via.
 -->
