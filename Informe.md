@@ -62,14 +62,14 @@ Notar, la mejor al tener 2 vias. Gracias a ellas tenemos que las lineas no se pi
 
 ![Ciclos de CPU en Stall](<stats/stats-ej1-img/Ciclos de CPU en Stall.png>)
 
-Y notar que justamente la cantidad de stalls es inveramente proporcional a la cantida de ciclos totales de la simulacion.
+Y notar que justamente la cantidad de stalls es inversamente proporcional a la cantidad de ciclos totales de la simulación.
 
-FIXME: Notar que hay un comportamiento raro con la cache de 4 vias, deberia ser igual al comportamiento del de 2 vias e igual con el de 8 vias.
+FIXME: Notar que hay un comportamiento raro con la cache de 4 vias, debería ser igual al comportamiento del de 2 vias e igual con el de 8 vias.
 
-Notar que todo lo anterior se relaciona con la cantidad de hits, en el caso del de 1 via podemos ver en los graficos que tenemos pocos.
+Notar que todo lo anterior se relaciona con la cantidad de hits, en el caso del de 1 via podemos ver en los gráficos que tenemos pocos.
 
 ![Dcache Hits](<stats/stats-ej1-img/Dcache Hits.png>)
 ![Dcache ReadReq Hits](<stats/stats-ej1-img/Dcache ReadReq Hits.png>)
 
-Especificamnete tenemos valores que entran en el rango de error de la simulacion, pero deberian ser 0, ya que siempre se remplazan las lineas. Luego para el caso de 2 vias, vemos como mejora la cantidad de hits porque justamente no tenemos los rempazos de linea.
+Específicamente tenemos valores que entran en el rango de error de la simulación, pero deberían ser 0, ya que siempre se remplazan las lineas. Luego para el caso de 2 vias, vemos como mejora la cantidad de hits porque justamente no tenemos los reemplazos de linea.
 TODO: COMPLETAR PARA CASO DE 4 Y 8 VIAS ...
