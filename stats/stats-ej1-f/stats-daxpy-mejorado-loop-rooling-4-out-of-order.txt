@@ -1,3 +1,6 @@
+cache out-of-order
+loop-rolling 4
+
 simInsts                                                               28688.0
 system.cpu_cluster.cpus.numCycles                                      36766.0
 system.cpu_cluster.cpus.cpi                                            1.28

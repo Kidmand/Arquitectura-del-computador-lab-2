@@ -1,5 +1,6 @@
 cache 32kB
 vias 1
+loop-rolling 2
 
 simInsts                                                               32784.0
 system.cpu_cluster.cpus.numCycles                                      207298.0

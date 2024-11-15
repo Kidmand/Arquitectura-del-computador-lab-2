@@ -1,3 +1,7 @@
+cache 32kB
+vias 1
+loop-rolling 4
+
 simInsts                                                               28688.0
 system.cpu_cluster.cpus.numCycles                                      211322.0
 system.cpu_cluster.cpus.cpi                                            7.37
