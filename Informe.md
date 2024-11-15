@@ -44,7 +44,7 @@ end:
 -->
 
 Como se vera en cada gráfico, las estadísticas no cambian según el tamaño de la cache.
-Esto es así ya que en nuestro programa, accedemos (lectura/escritura) secuencialmente a cada uno de los elementos de los arreglos. Por lo tanto no volveremos a necesitar un bloque al que ya hemos accedido entero, entonces, no hace falta que persistan en cache ya que no lo volveremos a necesitar. Por lo tanto aumentar el tamaño de cache no surtirá ningún efecto en nuestras estadísticas. Hacerlo nos permitiría guardar mas bloques, pero no nos hace falta ya que nosotros solo necesitamos guardar uno por arreglo.
+Esto es así ya que en nuestro programa, accedemos (lectura/escritura) secuencialmente a cada uno de los elementos de los arreglos. Por lo tanto no volveremos a necesitar un bloque al que ya hemos accedido entero, entonces, no hace falta que persistan en cache ya que no lo volveremos a necesitar. Por lo tanto aumentar el tamaño de cache no surtirá ningún efecto en nuestras estadísticas. Hacerlo nos permitiría guardar mas bloques, pero no nos hace falta ya que nosotros solo necesitamos guardar uno a la vez por arreglo.
 
 Aunque el tamaño de cache de datos no nos afecta, la cantidad de vias si. Así como en los siguientes casos de análisis.
 
@@ -59,11 +59,32 @@ Esto es así ya que:
 - Por como están inicializados los arreglos en memoria ram, estos se encuentran uno seguido al otro, es decir esta primero el arreglo X, luego el arreglo Y, y finalmente el Z.
 - Como los tamaños de cache son múltiplos de 32kB (son de 8kB, 16kB, y 32kB), analizando el caso de una sola via, tenemos que cada i-esimo elemento del arreglo X,Y y Z caen justamente en la misma linea, pisando siempre el bloque traído por el anterior arreglo.
 
-<!--
-Por que mejora con dos vias? debería ser igual para mi DEPENDIENDO DE LA POLITICA DE SUSTITUCION EN LA CACHE. ME explico, si siempre se substituye al bloque mas viejo, siempre se sustituira el bloque que la proxima iteracion necesita. Si se subtituye el mas nuevo ya si un bloque no se reemplazara.
--->
+Ahora,  ¿por que el rendimiento es mejor con dos vias?
+Aunque parezca que debería mejorar siempre, no es así, ya que depende de la política de reemplazo de la cache.
+Por ejemplo, si la política es reemplazar el bloque mas viejo, pasaría lo siguiente:
 
-Notar, la mejoría al tener 2 vias. Gracias a ellas tenemos que las lineas no se pisan tanto, es decir, como la cache tiene lineas de 64 bytes, (ie 8 palabras de 8 bytes) tenemos que se cargan en un set elementos del X y elementos de Y, estas se leen todas y dan hit por ello.
+| Buscamos un bloque de | Arrays cacheados |
+| --------------------- | ---------------- |
+| de X (Miss)           | X                |
+| de Y (Miss)           | X, Y             |
+| de Z (Miss)           | Z, Y             |
+| de X (Miss)           | Z, X             |
+| de Y (Miss)           | Y, X             |
+| de Z (Miss)           | Y, Z             |
+Como podemos observar, siempre se reemplaza el bloque que se querrá buscar en el siguiente acceso. Por lo que nunca tendremos hits.
+En cambio si la política es reemplazar el bloque mas nuevo:
+
+| Buscamos un bloque de | Arrays cacheados |
+| --------------------- | ---------------- |
+| de X (Miss)           | X                |
+| de Y (Miss)           | X, Y             |
+| de Z (Miss)           | X, Z             |
+| de X (Hit)            | X, Z             |
+| de Y (Miss)           | X, Y             |
+| de Z (Miss)           | X, Z             |
+
+Como podemos ver, acceder a X siempre daría Hit luego de traer por primera vez cada bloque correspondiente ya que nunca se lo reemplazaría.
+Como tenemos mejoras con dos vias, podemos inferir que la política de reemplazo tiene un efecto similar al segundo caso.
 
 A su vez podemos notar que la cantidad de ciclos totales de la simulación esta correlacionada con la cantidad de stalls:
 ![Ciclos de CPU en Stall](<stats/stats-ej1-img/Ciclos de CPU en Stall.png>)
@@ -93,4 +114,5 @@ Pero, ¿cuantos hits son de escritura y lectura?
 ![Dcache ReadReq Hits](<stats/stats-ej1-img/Dcache ReadReq Hits.png>)
 
 Como podemos observar, la cantidad de hits de lectura es mayor a la de escritura en todos los casos.
-Aproximadamente entre un 3.5% es de escritura, lo que concuerda con la proporción de nuestro código (leemos en X e Y y escribimos solo en Z). Salvo con 2 vias donde la mayoría de los hits son de lectura.
+Aproximadamente entre un 3.5% es de escritura, lo que concuerda con la proporción de nuestro código (leemos en X e Y y escribimos solo en Z).
+Salvo con 2 vias donde la mayoría de los hits son de lectura. Esto es posible que sea por lo dicho anteriormente sobre la política de reemplazo de la cache. Si al haber 2 vias, se reemplazan siempre los bloques Z e Y entre si por ejemplo, entonces tendríamos este efecto.
