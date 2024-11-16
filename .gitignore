@@ -10,3 +10,4 @@ benchmarks/*.img
 scripts/__pycache__/*
 /se_results/*
 .venv
+.obsidian
