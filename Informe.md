@@ -500,3 +500,55 @@ Al igual que el gráfico de stalls, también podemos ver una correlación invers
 
 Comparando este gráfico con el anterior notamos una relación que nos permite identificar aproximadamente 5 lecturas y 2 de escrituras por cada casillas (teniendo en cuenta lo dos arreglos). Esto sería un 70% más de veces de hits de lectura que de escritura, algo que se relaciona con nuestro programa dado que por cada casilla que no es borde leemos las 4 casillas adyascentes y escribimos una vez el arreglo temporal.
 Luego se nos suma una escritura y una lectura por cada casilla dado que compiamos el arreglo temporal al arreglo original.
+
+### Análisis de los predictores de saltos.
+
+<!-- En este punto se pretende analizar la diferencia al usar dos predictores de saltos
+distintos: local y predictor por torneos (que está compuesto por un predictor local y
+uno global). En primer lugar se debe analizar el código e intentar deducir qué tipo de
+predictor (local o global) funcionará mejor en cada tipo de salto y cuánto podría
+mejorar usar el de torneo. Correr el código con el predator local por defecto y
+obtener el miss rate calculado como:
+condIncorrect / (condPredicted + condIncorrect)
+Luego elegir el predictor por torneos (similar al utilizado en el procesador alpha
+21264) y obtener nuevamente el miss rate. En ambos casos utilizar las
+características de la caché que obtuvo la mejor performance en el punto c). Analizar
+si los resultados se corresponden con lo esperado y justificar -->
+
+Para el primer bucle con la etiqueta loop_init_t_amb nos conviene claramente el predictor local dado que se equivoca una vez al salir, dependiendo obviamente de como esté inicializado el estado, de igual en el peor caso fallaría dos veces.
+
+Para el segundo bucle con la etiqueta `loop_k`, también nos conviene el predictor local. Misma explicación que en el anterior.
+
+Para el tercer bucle con la etiqueta `loop_i` anidado al bucle con la etiqueta `loop_k`, también nos conviene el predictor local. Misma explicación que lo anterior.
+
+Para el cuarto bucle con la etiqueta `loop_j` anidado al bucle con la etiqueta `loop_i`, también nos conviene el predictor local. Misma explicación que lo anterior.
+
+Para el primer `if` dentro del bucle con la etiqeuta `loop_j`, es decir `if ((i * N + j) != (FC_X * N + FC_Y))` nos conviene el predictor local debido a que la fuenta de calor es única y estática por lo que falla una vez.
+
+Para los `if` que verifican si las casillas adyascentes son un borde nos conviene usar predictor global, dado que si la casilla tiene un borde superior, no va a tener una casilla borde inferior y viceversa. Luego si tenemos una casilla con borde a la derecha, no tendrá un borde a la izquierda y viceversa. Y dado que esto se repite todo el tiempo, nos da a entender que el mejor predictor a usar es el global.
+
+```asm
+sum = 0;
+if (i + 1 < N) // Casilla abajo
+    sum = sum + x[(i + 1) * N + j];
+else
+    sum = sum + T_AMB;
+
+if (i - 1 >= 0) // Casilla arriba
+    sum = sum + x[(i - 1) * N + j];
+else
+    sum = sum + T_AMB;
+
+if (j + 1 < N) // Casilla derecha
+    sum = sum + x[i * N + j + 1];
+else
+    sum = sum + T_AMB;
+
+if (j - 1 >= 0) // Casilla izquierda.
+    sum = sum + x[i * N + j - 1];
+else
+    sum = sum + T_AMB;
+```
+
+El último bucle con la etiqueta `loop_h` que está anidado al bucle con la etiqueta `loop_k` nos conviene el predictor local, y el `if` que está dentro de este bucle, también nos conviene un predictor local, dado que se equivoca una vez al salir, dependiendo obviamente de como esté inicializado el estado, de igual en el peor caso fallaría dos veces.
+Para el caso del `if`, este fallaría una vez porque compara la coordenadas de la fuente y sería el peor caso.
