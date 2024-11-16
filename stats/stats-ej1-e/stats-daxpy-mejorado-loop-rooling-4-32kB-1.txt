@@ -1,4 +1,4 @@
-caso in-order con 1 via y cache de 32kB
+casos in-order con 1 via y cache de 32kB
 loop-rolling 4
 
 simInsts                                                               28688.0

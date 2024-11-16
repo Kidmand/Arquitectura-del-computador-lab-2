@@ -1,4 +1,4 @@
-caso in-order con 2 vias y cache de 32kB
+casos in-order con 2 vias y cache de 32kB
 loop-rolling 0
 
 

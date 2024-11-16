@@ -1,4 +1,4 @@
-caso out-of-order con cache de 32kB
+casos out-of-order con cache de 32kB
 loop-rolling 8
 
 simInsts                                                               26640.0
