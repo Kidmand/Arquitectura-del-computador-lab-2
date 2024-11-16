@@ -1,4 +1,4 @@
-cache 8kB
+tamaño de cache 8kB
 vias 1
 
 simInsts                                                               40976.0
