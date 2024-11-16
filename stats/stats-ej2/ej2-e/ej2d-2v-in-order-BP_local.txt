@@ -1,4 +1,4 @@
-casos in-order, cache de 2 vias
+casos in-order, cache de 32kB y 2 vias
 Predictor de saltos Predictor Local
 
 simInsts                                                               1942251.0

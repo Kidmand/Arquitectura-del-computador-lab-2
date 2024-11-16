@@ -1,4 +1,4 @@
-casos out-of-order
+casos out-of-order, cache de 32kB
 Predictor de saltos Predictor Por Torneos
 
 simInsts                                                               1942252.0
