@@ -1,4 +1,4 @@
-casos cache de 2 vias
+casos cache de 32kB y 2 vias
 Predictor de saltos Predictor Por Torneos
 
 simInsts                                                               1942251.0
