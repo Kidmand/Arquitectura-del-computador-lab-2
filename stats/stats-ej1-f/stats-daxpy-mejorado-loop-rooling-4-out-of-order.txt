@@ -1,4 +1,4 @@
-cache out-of-order
+tipo de cache out-of-order
 loop-rolling 4
 
 simInsts                                                               28688.0
