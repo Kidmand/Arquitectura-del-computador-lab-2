@@ -136,7 +136,7 @@ loop_k:
                             //---------- Casilla arriba ---------\\
                             SUB X18, X9, #1
                             CMP X18, XZR                
-                            B.LT casilla_arriba         // if i - 1 >= 0, go end
+                            B.LT casilla_arriba                 // if i - 1 >= 0, go end
                                 MADD X19, X18, X12, X10         // X19 = (i-1)(X18) * N(X12) + j(X10)
                                 LDR D4, [X1, X19, LSL #3]       // D4 = x[(i-1)*N + j]
                                 FADD D2, D2, D4                 // SUM = SUM + x[(i-1)*N + j]
