@@ -4,9 +4,9 @@
 
 ## Integrantes
 
-- Alumno
-- Alumno
-- Alumno
+- Viola Lugo Ramiro
+- Giménez García Daián
+- Viola Di Benedetto Matias
 
 ## Ejercicio 1
 
@@ -130,9 +130,9 @@ assembler generados para los puntos a) y e).-->
 
 ### Mejorando el código de daxpy usando técnicas estáticas.
 
-En esta parte explicaremos la mejora que introdujimos en el código usando loop and rooling. Para un mejor entendimiento de la técnica usada, analizaremos más adelante comparando los resultados como esto varía dependiedo la cantidad de desenrrollado que usamos en el código del bucle.
+En esta parte explicaremos la mejora que introdujimos en el código usando loop unrolling. Para un mejor entendimiento de la técnica usada, analizaremos más adelante comparando los resultados como esto varía dependiedo la cantidad de desenrrollado que usamos en el código del bucle.
 
-> LOOP AND ROOLING DE 2
+> LOOP UNROLLING DE 2
 
 ```asm
     ldr x9, [x10]
@@ -168,7 +168,7 @@ loop:
 end:
 ```
 
-> LOOP AND ROOLING DE 4
+> LOOP UNROLLING DE 4
 
 ```asm
     ldr x9, [x10]
@@ -221,7 +221,7 @@ loop:
 end:
 ```
 
-> LOOP AND ROOLING DE 8
+> LOOP UNROLLING DE 8
 
 ```asm
    ldr x9, [x10]
@@ -310,31 +310,38 @@ loop:
 end:
 ```
 
-Este enfoque para loop and rooling, mejora la eficiencia del código al procesar más elementos por iteración, manteniendo un equilibrio entre el uso de registros y la reducción del overhead del bucle ya que se están haciendo menos comparaciones y saltos. Es una mejora estática que optimiza el rendimiento sin requerir cambios en el hardware o en la lógica del programa.
+Este enfoque para loop unrolling, mejora la eficiencia del código al procesar más elementos por iteración, manteniendo un equilibrio entre el uso de registros y la reducción del overhead del bucle ya que se están haciendo menos comparaciones y saltos. Es una mejora estática que optimiza el rendimiento sin requerir cambios en el hardware o en la lógica del programa.
 
-Ahora veamos algunos gráficos que representan los resultados obtenidos con esta mejora haciendo loop and rooling de 2, 4 y 8.
+Ahora veamos algunos gráficos que representan los resultados obtenidos con esta mejora haciendo loop unrolling de 2, 4 y 8.
 
 ![Ciclos Simulados](<stats/stats-ej1-e-img/Ciclos Simulados.png>)
 
-Como podemos ver en este gŕafico, existe una mejora significativa en cuanto a los ciclos en el caso del código original (sin loop and rooling) respecto del código mejorado usando la técnica de loop and rooling de 2, 4 y 8 respectivamente. También podemos notar que el caso de 2 representa la mejora más significativa en cuanto a ciclos. Según lo que analizamos, concluímos que debería haber una mejora incluso mayor o igual (menor o igual a cantidad de ciclos), pero nunca empeorar en el loop and rooling de 4 o incluso 8, ya que estamos evitando los saltos. Este comportamiento es lo que esperábamos, pero no está representado por los gráficos, lo cual es algo extraño.
+Como podemos ver en este gŕafico, existe una mejora significativa en cuanto a los ciclos en el caso del código original (sin loop unrolling) respecto del código mejorado usando la técnica de loop unrolling de 2, 4 y 8 respectivamente. También podemos notar que el caso de 2 representa la mejora más significativa en cuanto a ciclos. Según lo que analizamos, concluímos que debería haber una mejora incluso mayor o igual (menor o igual a cantidad de ciclos), pero nunca empeorar en el loop unrolling de 4 o incluso 8, ya que estamos evitando los saltos. Este comportamiento es lo que esperábamos, pero no está representado por los gráficos, lo cual es algo extraño.
 
 ![Ciclos de CPU en Stall](<stats/stats-ej1-e-img/Ciclos de CPU en Stall.png>)
 
-De manera similar en este gráfico lo que esperábamos era tener una menor cantidad de stalls a medidad que el loop and roolign aumentara.
+De manera similar en este gráfico lo que esperábamos era tener una menor cantidad de stalls a medidad que el loop unrollign aumentara.
 Cosa que al igual que antes los gráficos no están representando esta situación, lo que también es algo muy extraño.  
-Porque además no solo que aumenta entre los casos de 2, 4 y 8, sino que se está teniendo un comportamiento incluso peor en en los casos de 4 y 8 con respecto al código original (sin loop and rooling). Lo cual es algo aún más extraño.
+Porque además no solo que aumenta entre los casos de 2, 4 y 8, sino que se está teniendo un comportamiento incluso peor en los casos de 4 y 8 con respecto al código original (sin loop unrolling). Lo cual es algo aún más extraño.
+Igualmente podemos ver algo que esperábamos y es que la cantidad de stalls disminuye para el caso de loop unrroling de 2.
 
 ![Dcache Hits](<stats/stats-ej1-e-img/Dcache Hits.png>)
 
-Por otra parte, notemos que este gráfico sí representa lo que esperábamos (aunque seguimos teniendo valores en el margen de error de GEM5) por lo cual sólo la parte del código sin loop and rooling (loop and rooling de 0) representa correctamente los resultados obtenidos, lo cual puede entenderse fácilmente debido a que una cache de dos vía se dan muchos más hits y no se tiene que hacer un miss por cada acceso.
+Por otra parte, notemos que este gráfico sí representa lo que esperábamos (aunque seguimos teniendo valores en el margen de error de GEM5) por lo cual sólo la parte del código sin loop unrolling (loop unrolling de 0) representa correctamente los resultados obtenidos, lo cual puede entenderse fácilmente debido a que una cache de dos vías se dan muchos más hits y no se tiene que hacer un miss por cada acceso.
 
 ### Analizando y ejecunado el código anterior usando un procesador out-of-order.
 
 Como veremos en estos gráficos, se representa esquemáticamente la diferencia entre un procesador in-order y uno out-of-order.
+
 ![Ciclos Simulados](<stats/stats-ej1-f-img/Ciclos Simulados.png>)
 
-Analizando, concluímos que el comportamiento que eseperábamos,en este caso sí se está mostrando correctamente, dado que en un procesador out-of-order, el ordenamiento de las instrucciones es automático/dinámico, es decir se ejecuta de una manera tal que es muy óptima. Y esta mejora es para todos los casos, tenga o no loop and rooling. Debido a que la única mejora que le hicimos al códidgo fue usando solo la técnica de loop and rooling y ninguna más.
+Analizando, concluímos que el comportamiento que eseperábamos, en este caso sí se está mostrando correctamente, dado que en un procesador out-of-order, el ordenamiento de las instrucciones es automático/dinámico, es decir se ejecuta de una manera más óptima. Y esta mejora es para todos los casos, tenga o no loop unrolling. Debido a que las únicas mejoras que le hicimos al códidgo fue usando solo las técnicas de loop unrolling, register remainig y ninguna más.
 
 ![Ciclos de CPU en Stall](<stats/stats-ej1-f-img/Ciclos de CPU en Stall.png>)
 
+Al igual que antes, podemos ver una disminución muy significativa en cuanto a los stalls en los distintos casos, esto también puede entenderse fácilmente debido a que en el procesador out-of-order al tener un ordenamiento bastante óptimo, ejecuta de manera eficiente las intrucciones reduciendo de esta manera, la cantidad de stall. Como se mencionó anteriromente, esto no es idependiente para cada caso, sino que en todos los casos el comportamiento es similar. Siguiendo con esta misma idea, nos damos cuenta que para este procesador out-of-order, puede soportar mejores técnicas de optimización que las que aplicamos al código.
+Por esta razón el comportamiento de los resultados tanto de los ciclos como el de los stalls es similar para los casos de loop unrolling de 2, 4, 8 y también para el caso del código sin loop unrolling (loop unrolling de 0).
+
 ![Dcache Hits](<stats/stats-ej1-f-img/Dcache Hits.png>)
+
+En base a lo analizado, creemos que el procesador que estamos usando para simular soporta (loop unrolling). Por esta razón podemos ver en el gráfico que el caso del código sin loop unrolling, la cantidad de hits es mayor para los casos del código con loop unrolling de 2, 4 y 8. De esta manera, deducimos que para el caso del código sin loop unrolling se está haciendo lo más óptimo posible, y en los otros no, debido a que está hecho de forma estática.
