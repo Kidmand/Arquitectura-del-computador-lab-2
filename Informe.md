@@ -327,3 +327,14 @@ Porque además no solo que aumenta entre los casos de 2, 4 y 8, sino que se est�
 ![Dcache Hits](<stats/stats-ej1-e-img/Dcache Hits.png>)
 
 Por otra parte, notemos que este gráfico sí representa lo que esperábamos (aunque seguimos teniendo valores en el margen de error de GEM5) por lo cual sólo la parte del código sin loop and rooling (loop and rooling de 0) representa correctamente los resultados obtenidos, lo cual puede entenderse fácilmente debido a que una cache de dos vía se dan muchos más hits y no se tiene que hacer un miss por cada acceso.
+
+### Analizando y ejecunado el código anterior usando un procesador out-of-order.
+
+Como veremos en estos gráficos, se representa esquemáticamente la diferencia entre un procesador in-order y uno out-of-order.
+![Ciclos Simulados](<stats/stats-ej1-f-img/Ciclos Simulados.png>)
+
+Analizando, concluímos que el comportamiento que eseperábamos,en este caso sí se está mostrando correctamente, dado que en un procesador out-of-order, el ordenamiento de las instrucciones es automático/dinámico, es decir se ejecuta de una manera tal que es muy óptima. Y esta mejora es para todos los casos, tenga o no loop and rooling. Debido a que la única mejora que le hicimos al códidgo fue usando solo la técnica de loop and rooling y ninguna más.
+
+![Ciclos de CPU en Stall](<stats/stats-ej1-f-img/Ciclos de CPU en Stall.png>)
+
+![Dcache Hits](<stats/stats-ej1-f-img/Dcache Hits.png>)
