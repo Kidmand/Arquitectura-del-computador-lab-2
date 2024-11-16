@@ -468,3 +468,8 @@ loop_k:
             b loop_k
 loop_k_end:
 ```
+
+![Ciclos Simulados](<stats/stats-ej2/ej2-c-img/Ciclos Simulados.png>)
+![Dcache Hits](<stats/stats-ej2/ej2-c-img/Dcache Hits.png>)
+![Ciclos de CPU en Stall](<stats/stats-ej2/ej2-c-img/Ciclos de CPU en Stall.png>)
+![Dcache ReadReq Hits](<stats/stats-ej2/ej2-c-img/Dcache ReadReq Hits.png>)
