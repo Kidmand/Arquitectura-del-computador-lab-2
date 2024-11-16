@@ -77,122 +77,131 @@ for(int k = 0; k < n_iter; ++k) {
 */
 // =================== MAIN: ========================
 
+scvtf D0, x4    
 MOV X8, #0              // X8 = i Condición para salto
-MOV X9, X1              // X9 = i*8 Que es la posición de cada elemento. 
-MUL X10, X0, X0         // N*N
+MOV X9, #0              // X9 = i*8 Que es la posición de cada elemento. 
+MUL X10, X0, X0         // X10 = N*N
 
 loop_init_t_amb: 
-    CMP X9, X10
+    CMP X8, X10
     B.GE loop_init_t_amb_end
-    STR X4, [X9]
+    STR D0, [X1, x9]
     ADD X8, X8, #1
     ADD X9, X9, #8
     B loop_init_t_amb
 loop_init_t_amb_end: 
 
-MADD X11, X5, X0, X6    // X11 = fc_x(X5) * N(X0) + fc_y(X6)
-STR X7, [X11]           // x[fc_x*N+fc_y] = fc_temp(X7);
+scvtf D1, x7  
+MADD X11, X5, X0, X6        // X11 = fc_x(X5) * N(X0) + fc_y(X6)
+STR D1, [X1, X11]           // x[fc_x*N+fc_y] = fc_temp(D1);
 
-MOV X8, #0          // X8 = k
-MOV X9, #0          // X9 = i
-MOV X10, #0         // X10 = j
-MOV X25, #0         // X25 = h
-MOV X11, X3         // X11 = (n_iter = 10)
-MOV X12, X0         // X12 = (N = 64)
-MOV X15, #0         // X15 = (SUM = 0)
-MUL X26, X0, X0     // X26 = N*N
+MOV X8, #0                  // X8 = k
+MOV X9, #0                  // X9 = i
+MOV X10, #0                 // X10 = j
+MOV X25, #0                 // X25 = h
+MOV X11, X3                 // X11 = (n_iter = 10)
+MOV X12, X0                 // X12 = (N = 64)
+MOV X15, #0                 // X15 = (SUM = 0)
+MUL X26, X0, X0             // X26 = N*N
+FMOV D8, #4.0               // D8 = 4.0
+MADD X14, X5, x0, X6       //  X14 = fc_x(X5) * N(X0) + fc_y(X6) (ie, el punto de calor)
 
 loop_k: 
     CMP X8, X11
     B.GE loop_k_end
-    MOV X9, #0
+    MOV X9, #0               // i = 0
     loop_i:
         CMP X9, X12
         B.GE loop_i_end
-        MOV X10, #0
+        MOV X10, #0          // j = 0
         loop_j:
             CMP X10, X12
             B.GE loop_j_end
-            MADD X13, X9, X12, X11      // X13 = i(X9) * N(X12) + j(X11)
-            MADD X14, X5, X12, X6       // X14 = fc_x(X5) * N(12) + fc_y(X6)
+            MADD X13, X9, X12, X10      // X13 = i(X9) * N(X12) + j(X10)  
             CMP X13, X14
             B.EQ loop_j_end_if
-                MOV X15, #0
+                MOVI D2, #0             // SUM = 0.0
 
                 ADD X16, X9, #1
                 CMP X16, X12
                 B.GE casilla_abajo
                     MADD X17, X16, X12, X10         // X17 = (i+1)(X16) * N(X12) + j(X10)
-                    LDUR X17, [X17] 
-                    ADD X15, X15, X17
+                    LSL X17, X17, #3
+                    LDR D3, [X1, X17] 
+                    FADD D2, D2, D3
                     B casilla_abajo_end
                 casilla_abajo:
-                    ADD X15, X15, X4
+                    FADD D2, D2, D0
                 casilla_abajo_end:
 
                 SUB X18, X9, #1
                 CMP X18, XZR
                 B.LT casilla_arriba
                     MADD X19, X18, X12, X10         // X19 = (i-1)(X16) * N(X12) + j(X10)
-                    LDUR X19, [X19] 
-                    ADD X15, X15, X19
+                    LSL X19, X19, #3
+                    LDR D4, [X1, X19] 
+                    FADD D2, D2, D4
                     B casilla_arriba_end
                 casilla_arriba:
-                    ADD X15, X15, X4
+                    FADD D2, D2, D0
                 casilla_arriba_end:
 
                 ADD X20, X10, #1
                 CMP X20, X12
                 B.GE casilla_derecha
                     MADD X21, X9, X12, X20         // X21 = (i)(X16) * N(X12) + (j+1)(X10)
-                    LDUR X21, [X21] 
-                    ADD X15, X15, X21
+                    LSL X21, X21, #3
+                    LDR D5, [X1, X21] 
+                    FADD D2, D2, D5
                     B casilla_derecha_end
                 casilla_derecha:
-                    ADD X15, X15, X4
+                    FADD D2, D2, D0
                 casilla_derecha_end:
 
                 SUB X22, X10, #1
                 CMP X22, XZR
                 B.LT casilla_izquierda
                     MADD X23, X9, X12, X22         // X21 = (i)(X16) * N(X12) + (j-1)(X10)
-                    LDUR X23, [X23] 
-                    ADD X15, X15, X23
+                    LSL X23, X23, #3
+                    LDR D6, [X1, X23] 
+                    FADD D2, D2, D6
                     B casilla_izquierda_end
                 casilla_izquierda:
-                    ADD X15, X15, X4
+                    FADD D2, D2, D0
                 casilla_izquierda_end:
 
-                LSR X15, X15, #2
+                FDIV D2, D2, D8
                 MADD X24, X9, X12, X10              // X24 = i(X9) * N(12) + j(10)
-                STR X15, [X2, X24]
+                LSL X24, X24, #3
+                STR D2, [X2, X24]
 
             loop_j_end_if:
                 ADD  X10, X10, #1           // j(X10) = j + 1
                 B loop_j
 
         loop_j_end:
-            ADD X9, X9, #1
+            ADD X9, X9, #1                  // i(X9) = i + 1
             B loop_i
 
     loop_i_end:  
 
         MOV X25, #0
+        MOV X28, #0
         loop_h:
             CMP X25, X26
             B.GE loop_h_end
-            MADD X27, X5, X12, X6
-            CMP X25, X27
-            B.NE loop_h_end_if
-            LDR X28, [X2, X25]
-            STR X28, [X1, X25]
-            loop_h_end_if:
-            ADD X25, X25, #1
-            B loop_h
+                CMP X25, X14
+                B.EQ loop_h_end_if
+                    LDR D7, [X2, X28]
+                    STR D7, [X1, X28]
+                loop_h_end_if:
+                ADD X25, X25, #1
+                ADD X28, X28, #8
+                B loop_h
 
         loop_h_end:
 
-        ADD X8, X8, #1
+        ADD X8, X8, #1                      // k(X8) = k + 1
         b loop_k
 loop_k_end:
 
