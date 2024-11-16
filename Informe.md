@@ -106,7 +106,7 @@ Pero, ¿cuántos hits son de escritura y lectura?
 ![Dcache ReadReq Hits](<stats/stats-ej1-img/Dcache ReadReq Hits.png>)
 
 Como podemos observar, la cantidad de hits de lectura es mayor a la de escritura en todos los casos.
-Aproximadamente entre un 3.5% es de escritura, lo que concuerda con la proporción de nuestro código (leemos en X e Y y escribimos solo en Z).
+Aproximadamente entre un 35% es de escritura, lo que concuerda con la proporción de nuestro código (leemos en X e Y y escribimos solo en Z).
 Salvo con 2 vías donde la mayoría de los hits son de lectura. Esto es posible que sea por lo dicho anteriormente sobre la política de reemplazo de la cache. Si al haber 2 vías, se reemplazan siempre los bloques Z e Y entre si por ejemplo, entonces tendríamos este efecto.
 
 ### Mejorando el código de daxpy usando técnicas estáticas.
@@ -469,7 +469,34 @@ loop_k:
 loop_k_end:
 ```
 
+Empecemos analizando este código, donde tenemos dos arreglos, los cuales vamos leyendo y escribiendo, por lo que tendremos un comportamiento similar al ejercicio 1 en las cuales los bloques serán reemplazados sin aprovechar al máximo la cache. Siguiendo con esta idea, al tener una cache asociativa de 2 vías y 2 arreglos podremos aprovechar un mejor uso de la cache teniendo menos reemplazos.
+
+Veamos el gráfico que representa esta situación con la cantidad de ciclos simulados.
+
 ![Ciclos Simulados](<stats/stats-ej2/ej2-c-img/Ciclos Simulados.png>)
-![Dcache Hits](<stats/stats-ej2/ej2-c-img/Dcache Hits.png>)
+
+Notemos que el gráfico demuestra esquemáticamente lo mencionado anteriormente, al ver que existe una mejora de una cache de 1 vía a una de 2.
+
+Observemos que en el gráfico la cantidad de ciclos simulados en 2, 4 y 8 vías son similares.
+
+<!-- TODO:
+Al dividir la cache en más vías
+
+Analicemos esto en detalle:
+Por como es nuestro programa, estamos accediendo siempre por cada casilla del arreglo a las posiciones izquierda, derecha, arriba y abajo del arreglo, por esta razón simplemente nos alcanza con que la cache tenga aproximadamente un tamaño mayor o igual al que hay entre la casilla arriba y la casilla abajo, es decir 1024 bytes (1KB). Para que contemple los casos especiales, podemos pensar un tamaño fijo de 2048 bytes (2KB) ahorrándonos los problemas.
+
+Como dijimos en un principio con las caches de 2, 4 y 8 vías, las cantidades de ciclos simulados son similirares debido a que tenemos siempre una cache de 32KB y aumentar la cantidad de vías reduce el tamaño de la cahce de cada vía, pero en el peor de los casos tendremos un tamaña de 32KB/8 = 4KB que es mayor al margen que de 2KB que es lo que necesitamos para aprovechar la cache.
+TODO:  -->
+
 ![Ciclos de CPU en Stall](<stats/stats-ej2/ej2-c-img/Ciclos de CPU en Stall.png>)
+
+Como podemos ver la cantidad de stall disminuye significativamente teniendo varias vías (2, 4, 8) algo que está correlacionado con la cantidad de ciclos simulados mostrado en el gráfico anterior.
+
+![Dcache Hits](<stats/stats-ej2/ej2-c-img/Dcache Hits.png>)
+
+Al igual que el gráfico de stalls, también podemos ver una correlación inversa con respecto al gráfico de ciclos simulados, ya que estamos aprovechando la mejor la cache.
+
 ![Dcache ReadReq Hits](<stats/stats-ej2/ej2-c-img/Dcache ReadReq Hits.png>)
+
+Comparando este gráfico con el anterior notamos una relación que nos permite identificar aproximadamente 5 lecturas y 2 de escrituras por cada casillas (teniendo en cuenta lo dos arreglos). Esto sería un 70% más de veces de hits de lectura que de escritura, algo que se relaciona con nuestro programa dado que por cada casilla que no es borde leemos las 4 casillas adyascentes y escribimos una vez el arreglo temporal.
+Luego se nos suma una escritura y una lectura por cada casilla dado que compiamos el arreglo temporal al arreglo original.
