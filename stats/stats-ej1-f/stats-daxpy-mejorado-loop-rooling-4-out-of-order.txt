@@ -1,5 +1,6 @@
-tipo de cache out-of-order
+caso out-of-order con cache de 32kB
 loop-rolling 4
+
 
 simInsts                                                               28688.0
 system.cpu_cluster.cpus.numCycles                                      36766.0

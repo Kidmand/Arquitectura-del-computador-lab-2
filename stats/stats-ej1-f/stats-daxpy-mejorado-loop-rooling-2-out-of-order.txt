@@ -1,4 +1,4 @@
-tipo de cache out-of-order
+caso out-of-order con cache de 32kB
 loop-rolling 2
 
 simInsts                                                               32784.0

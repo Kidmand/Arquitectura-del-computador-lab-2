@@ -1,4 +1,4 @@
-caso out-of-order con cache de 32kB
+caso in-order con 2 vias y cache de 16kB
 loop-rolling 0
 
 simInsts                                                               40976.0
@@ -22,7 +22,7 @@ system.cpu_cluster.cpus.commitStats0.committedInstType::MemWrite       4096.0
 system.cpu_cluster.cpus.dcache.overallHits::total                      4822.0
 system.cpu_cluster.cpus.dcache.overallMisses::total                    7473.0
 system.cpu_cluster.cpus.dcache.overallAccesses::total                  12295.0
-system.cpu_cluster.cpus.dcache.replacements                            6703.0
+system.cpu_cluster.cpus.dcache.replacements                            6938.0
 system.cpu_cluster.cpus.dcache.ReadReq.hits::total                     4741.0
 system.cpu_cluster.cpus.dcache.ReadReq.accesses::total                 8199.0
 system.cpu_cluster.cpus.dcache.WriteReq.hits::total                    81.0

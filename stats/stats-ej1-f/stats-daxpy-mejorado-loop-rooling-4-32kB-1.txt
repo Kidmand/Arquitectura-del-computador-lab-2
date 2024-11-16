@@ -1,5 +1,6 @@
-tipo de cache in-order
+caso in-order con 1 via y cache de 32kB
 loop-rolling 4
+
 
 simInsts                                                               28688.0
 system.cpu_cluster.cpus.numCycles                                      211322.0

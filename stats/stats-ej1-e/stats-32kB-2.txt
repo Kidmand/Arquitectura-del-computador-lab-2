@@ -1,5 +1,6 @@
-caso out-of-order con cache de 32kB
+caso in-order con 2 vias y cache de 32kB
 loop-rolling 0
+
 
 simInsts                                                               40976.0
 system.cpu_cluster.cpus.numCycles                                      188240.0
