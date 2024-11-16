@@ -7,8 +7,8 @@
     fc_temp: .dword 100
 
 .bss 
-	x: .zero  3072        
-	x_temp: .zero  3072    
+	x: .zero  32768        
+	x_temp: .zero  32768    
 
 .text
 //  =================== INIT: ========================
