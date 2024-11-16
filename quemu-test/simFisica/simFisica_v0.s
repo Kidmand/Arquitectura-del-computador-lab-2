@@ -79,21 +79,19 @@ for(int k = 0; k < n_iter; ++k) {
 
 scvtf D0, x4    
 MOV X8, #0              // X8 = i Condición para salto
-MOV X9, #0              // X9 = i*8 Que es la posición de cada elemento. 
 MUL X10, X0, X0         // X10 = N*N
 
 loop_init_t_amb: 
     CMP X8, X10
     B.GE loop_init_t_amb_end    // if i >= N, end
-    STR D0, [X1, x9]            // x[i] = t_amb
+    STR D0, [X1, X8, LSL #3]    // x[i] = t_amb
     ADD X8, X8, #1              // i(X8) = i + 1
-    ADD X9, X9, #8
     B loop_init_t_amb
 loop_init_t_amb_end: 
 
 scvtf D1, x7  
-MADD X11, X5, X0, X6        // X11 = fc_x(X5) * N(X0) + fc_y(X6)
-STR D1, [X1, X11]           // x[fc_x*N+fc_y] = fc_temp(D1);
+MADD X11, X5, X0, X6         // X11 = fc_x(X5) * N(X0) + fc_y(X6)
+STR D1, [X1, X11, LSL #3]    // x[fc_x*N+fc_y] = fc_temp(D1);
 
 MOV X8, #0                  // X8 = k
 MOV X9, #0                  // X9 = i
@@ -126,8 +124,7 @@ loop_k:
                             CMP X16, X12                
                             B.GE casilla_abajo          // if i + 1 < N, go end
                                 MADD X17, X16, X12, X10         // X17 = (i+1)(X16) * N(X12) + j(X10)
-                                LSL X17, X17, #3
-                                LDR D3, [X1, X17]               // D3 = x[(i+1)*N + j]
+                                LDR D3, [X1, X17, LSL #3]       // D3 = x[(i+1)*N + j]
                                 FADD D2, D2, D3                 // SUM = SUM + x[(i+1)*N + j]
                                 B casilla_abajo_end
                             casilla_abajo:
@@ -140,8 +137,7 @@ loop_k:
                             CMP X18, XZR                
                             B.LT casilla_arriba         // if i - 1 >= 0, go end
                                 MADD X19, X18, X12, X10         // X19 = (i-1)(X18) * N(X12) + j(X10)
-                                LSL X19, X19, #3
-                                LDR D4, [X1, X19]               // D4 = x[(i-1)*N + j]
+                                LDR D4, [X1, X19, LSL #3]       // D4 = x[(i-1)*N + j]
                                 FADD D2, D2, D4                 // SUM = SUM + x[(i-1)*N + j]
                                 B casilla_arriba_end
                             casilla_arriba:
@@ -154,8 +150,7 @@ loop_k:
                             CMP X20, X12
                             B.GE casilla_derecha        // if j + 1 < N, go end
                                 MADD X21, X9, X12, X20          // X21 = (i)(X16) * N(X12) + (j+1)(X10)
-                                LSL X21, X21, #3
-                                LDR D5, [X1, X21]               // D5 = x[i*N + j+1]
+                                LDR D5, [X1, X21, LSL #3]       // D5 = x[i*N + j+1]
                                 FADD D2, D2, D5                 // SUM = SUM + x[i*N + j+1]
                                 B casilla_derecha_end
                             casilla_derecha:
@@ -168,8 +163,7 @@ loop_k:
                             CMP X22, XZR
                             B.LT casilla_izquierda      // if j - 1 >= 0, go end
                                 MADD X23, X9, X12, X22         // X23 = (i)(X16) * N(X12) + (j-1)(X10)
-                                LSL X23, X23, #3
-                                LDR D6, [X1, X23]              // D6 = x[i*N + j-1]
+                                LDR D6, [X1, X23, LSL #3]      // D6 = x[i*N + j-1]
                                 FADD D2, D2, D6                // SUM = SUM + x[i*N + j-1]
                                 B casilla_izquierda_end
                             casilla_izquierda:
@@ -180,8 +174,7 @@ loop_k:
                             // -------- Guardar en x_tmp --------
                             FDIV D2, D2, D8             // SUM = SUM / 4                 
                             MADD X24, X9, X12, X10      // X24 = i(X9) * N(12) + j(10)
-                            LSL X24, X24, #3        
-                            STR D2, [X2, X24]           // x_tmp[i*N + j] = SUM
+                            STR D2, [X2, X24, LSL #3]   // x_tmp[i*N + j] = SUM
                             // ----------------------------------
 
                     loop_j_end_if:
@@ -196,17 +189,15 @@ loop_k:
 
             // -------- Cargar valores de x_tmp a x --------
             MOV X25, #0       // h = 0
-            MOV X28, #0
             loop_h:
                 CMP X25, X26
                 B.GE loop_h_end     // if h >= N*N, go end
                     CMP X25, X14
                     B.EQ loop_h_end_if      // if h == (fc_x*N + fc_y), go end
-                        LDR D7, [X2, X28]       // D7 = x_tmp[h]
-                        STR D7, [X1, X28]       // x[h] = x_tmp[h]
+                        LDR D7, [X2, X25, LSL #3]       // D7 = x_tmp[h]
+                        STR D7, [X1, X25, LSL #3]       // x[h] = x_tmp[h]
                     loop_h_end_if:
                     ADD X25, X25, #1        // h = h + 1
-                    ADD X28, X28, #8        // x28 = x28 + 8
                     B loop_h
 
             loop_h_end:
