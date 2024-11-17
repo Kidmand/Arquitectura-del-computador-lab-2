@@ -494,7 +494,7 @@ Como podemos ver la cantidad de stall disminuye significativamente teniendo vari
 
 ![Dcache Hits](<stats/stats-ej2/ej2-c-img/Dcache Hits.png>)
 
-Al igual que el gráfico de stalls, también podemos ver una correlación inversa con respecto al gráfico de ciclos simulados, ya que estamos aprovechando la mejor la cache.
+Al igual que el gráfico de stalls, también podemos ver una correlación inversa con respecto al gráfico de ciclos simulados, ya que estamos aprovechando mejor la cache.
 
 ![Dcache ReadReq Hits](<stats/stats-ej2/ej2-c-img/Dcache ReadReq Hits.png>)
 
@@ -515,7 +515,7 @@ Luego elegir el predictor por torneos (similar al utilizado en el procesador alp
 características de la caché que obtuvo la mejor performance en el punto c). Analizar
 si los resultados se corresponden con lo esperado y justificar -->
 
-Para el primer bucle con la etiqueta loop_init_t_amb nos conviene claramente el predictor local dado que se equivoca una vez al salir, dependiendo obviamente de como esté inicializado el estado, de igual en el peor caso fallaría dos veces.
+Para el primer bucle con la etiqueta `loop_init_t_amb` nos conviene claramente el predictor local dado que se equivoca una vez al salir, dependiendo obviamente de como esté inicializado el estado, de igual forma en el peor caso fallaría dos veces.
 
 Para el segundo bucle con la etiqueta `loop_k`, también nos conviene el predictor local. Misma explicación que en el anterior.
 
@@ -550,5 +550,5 @@ else
     sum = sum + T_AMB;
 ```
 
-El último bucle con la etiqueta `loop_h` que está anidado al bucle con la etiqueta `loop_k` nos conviene el predictor local, y el `if` que está dentro de este bucle, también nos conviene un predictor local, dado que se equivoca una vez al salir, dependiendo obviamente de como esté inicializado el estado, de igual en el peor caso fallaría dos veces.
+El último bucle con la etiqueta `loop_h` que está anidado al bucle con la etiqueta `loop_k` nos conviene el predictor local, y el `if` que está dentro de este bucle, también nos conviene un predictor local, dado que se equivoca una vez al salir, dependiendo obviamente de como esté inicializado el estado, de igual forma en el peor caso fallaría dos veces.
 Para el caso del `if`, este fallaría una vez porque compara la coordenadas de la fuente y sería el peor caso.
