@@ -552,3 +552,18 @@ else
 
 El último bucle con la etiqueta `loop_h` que está anidado al bucle con la etiqueta `loop_k` nos conviene el predictor local, y el `if` que está dentro de este bucle, también nos conviene un predictor local, dado que se equivoca una vez al salir, dependiendo obviamente de como esté inicializado el estado, de igual forma en el peor caso fallaría dos veces.
 Para el caso del `if`, este fallaría una vez porque compara la coordenadas de la fuente y sería el peor caso.
+
+### Usando predictor global y comparando resultados con el predictor local.
+
+En esta parte se pretende mostrar la diferencia en cuanto a eficiencia de los distintos predictores de saltos (local y por torneo) y analizar esta mejora y porqué se produce.
+
+![Miss Rate](<stats/stats-ej2/ej2-d-img/Miss Rate.png>)
+
+Como se puede ver en este gráfico, existe una mejora en términos del miss Rate del predictor por torneo frente al predictor local.
+La razón es la siguienete: Nuestro código traducido mezcla tanto bucles como `if`, por lo visto en la cátedra, en la mayoría de los casos siempre conviene un predictor local para los bucles y un predictor global para los `if`. Con esto en mente, como se mencionó anteriormente, nuestro código cuenta con bucles e `if`, por lo que estamos combinando predictor global y local. Si usamos solo un predictor local, fallaríamos muchas veces para los `if` que están dentro del bucle con la etiqueta `loop_j`, es decir que se aumentaría la cantidad de ciclos debido al fallo de predicción. Por otra parte si usamos el predictor por torneos que está compuesto por un predictor global y uno local, a simple vista podríamos pensar que es claro que sería el mejor predictor, pero nos está faltando algo muy importante. ¿Por qué es mejor este predictor?, podríamos llegar a pensar que el hecho mismo de elegir que predictor usar (global y local hablando del predictor por torneos) conllevaría más gastos de ciclos, pero esto en realidad no nos afecta tanto como lo haría predicir mal el salto. Y esto en realidad reduce el miss Rate haciendolo por supuesto más eficiente, debido a que en cada momemento en lo que hay un salto ya sea por `if` o por bucle, siempre estamos eligiendo el mejor predictor, lo cual es beneficioso usarlo en nuestro código dado que combina predictores globales y locales.
+
+Cabe mencionar que este gráfico si representa lo que esperábamos, basado por suepuesto y siempre manteniéndonos al margen de que nuestro código combina `if` y bucles, y según nuestros análisis también conbina el uso de predictores globales y locales.
+
+<!-- Ejecutar la simulación utilizando el procesador out-of-order con las características d
+la caché que obtuvo la mejor performance en el punto c) y un predictor de saltos po
+torneos. Comparar los resultados obtenidos con el punto d). -->
