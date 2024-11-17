@@ -525,7 +525,7 @@ Para el cuarto bucle con la etiqueta `loop_j` anidado al bucle con la etiqueta `
 
 Para el primer `if` dentro del bucle con la etiqeuta `loop_j`, es decir `if ((i * N + j) != (FC_X * N + FC_Y))` nos conviene el predictor local debido a que la fuenta de calor es única y estática por lo que falla una vez.
 
-Para los `if` que verifican si las casillas adyascentes son un borde nos conviene usar predictor global, dado que si la casilla tiene un borde superior, no va a tener una casilla borde inferior y viceversa. Luego si tenemos una casilla con borde a la derecha, no tendrá un borde a la izquierda y viceversa. Y dado que esto se repite todo el tiempo, nos da a entender que el mejor predictor a usar es el global.
+Para los `if` que verifican si las casillas adyascentes son un borde nos conviene usar predictor global, dado que si la casilla tiene un borde superior, no va a tener una casilla borde inferior y viceversa. Luego si tenemos una casilla con borde a la derecha, no tendrá un borde a la izquierda y viceversa. Y dado que esto se repite todo el tiempo, nos da a entender que el mejor predictor a usar es el global para este caso.
 
 ```asm
 sum = 0;
@@ -555,14 +555,71 @@ Para el caso del `if`, este fallaría una vez porque compara la coordenadas de l
 
 ### Usando predictor global y comparando resultados con el predictor local.
 
-En esta parte se pretende mostrar la diferencia en cuanto a eficiencia de los distintos predictores de saltos (local y por torneo) y analizar esta mejora y porqué se produce.
+En esta parte se pretende mostrar la diferencia en cuanto a eficiencia de los distintos predictores de saltos (local y por torneo) y analizar esta mejora y porqué se produce, para ello primero vamos a hacer un análisis no tan exhaustivo y de manera manual para después comparar con los resultados de la simulación.
+
+Los cálculos que hicimos para un predictor local fueron:
+
+- Aciertos predictor = 4095+9+(10x(63+64x63+64x64−1+(64x64−1−64)x4+(64x64−1)x2)) = 329144
+- Fallas predictor = 1+1+10x(1+64+1+64x4+1+1) = 3242
+- Predicciones totales = (3242 + 329144) = 332386
+
+**4095+9+(10x(63+64x63+64x64−1+(64x64−1−64)x4+(64x64−1)x2)):**
+
+- 4095 aciertos del bucle de inicialización.
+- 9 aciertos del bucle con la etiqueta `loop_k`.
+- Ahora veamos los bucles anidados, por eso se multiplica por 10. Tenemos 63 aciertos para el primer bucle anidado, y (64x63) del segundo bucle anidado.
+- Se tienen (64x64 - 1) = 4095 aciertos del `if` dentro del bucle anidado `loop_j`.
+- Se tiene (64x64−1−64) aciertos por cada `if` que verifican los bordes, y como son 4 se multiplica por 4. (Aclaración: se resta 1 por cada falla en la que se encuentra la fuente de calor y se le resta 64 por los bordes).
+- luego tenemos el bucle con la etiqueta `loop_h` anidado al bucle con la etiqueta `loop_k` que tiene (64x64−1) aciertos.
+- Dentro del bucle con la etiqueta `loop_h` se encuentra un `if` que acierta (64x64−1) veces.
+
+**1+1+10x(1+64+1+64x4+1+1):**
+
+- 1 falla del bucle de inicialización.
+- 1 falla del bucle con la etiqueta `loop_k`.
+- Ahora veamos los bucles anidados, por eso se multiplica por 10. Tenemos 1 falla para el primer bucle anidado, y 64 del segundo bucle anidado.
+- Se tiene 1 falla del `if` dentro del bucle anidado `loop_j` poque hay una única fuente y es estática.
+- Se tiene 64 fallas por cada `if` que verifican los bordes, y como son 4 se multiplica por 4.
+- luego tenemos el bucle con la etiqueta `loop_h` anidado al bucle con la etiqueta `loop_k` que falla una vez.
+- Dentro del bucle con la etiqueta `loop_h` se encuentra un `if` que falla una vez.
+
+El mis Rate del predictor local nos quedaría: 3242/332386 = 0,00975372
+
+Ahora analicemos el predictor por torneo cosiderando lo que pensamos anteriormente, referido al que el predictor global andaría mejor dentro de los if que están dentro del bucle con la etiqeuta `loop_j`.
+Básicamente lo que hicimos en este fue cambiar el predictor de los if mencionados de local a global quedándonos cuentas similares, cambiando lo siguiente:
+
+- Predictor global (64x64−1)x4
+- Predictor local (64x64−1−64)x4
+
+Quedando la fórmula para calcular los aciertos de la siguiente manera:
+
+- 4095+9+(10x(63+64x63+64x64−1+(64x64−1)x4+(64x64−1)x2)) = 331704
+
+De forma similar usando el predictor global reduce las fallas quedando de la siguiente manera:
+
+- Predictor global (1+64+1+4+1+1)
+- Predictor local (1+64+1+64x4+1+1)
+
+Quedando la fórmula para calcular las fallas:
+
+- 1+1+10x(1+64+1+4+1+1) = 722
+
+El mis Rate del predictor por torneos nos quedaría: 722/(331704 + 722) = 0,0022
+
+Como conclusión de estos resultados vemos que el predictor por torneo nos da una mejor predicción de los saltos frente al predictor local.
+
+Los resultados obtenidos en la simulación son:
 
 ![Miss Rate](<stats/stats-ej2/ej2-d-img/Miss Rate.png>)
 
 Como se puede ver en este gráfico, existe una mejora en términos del miss Rate del predictor por torneo frente al predictor local.
-La razón es la siguienete: Nuestro código traducido mezcla tanto bucles como `if`, por lo visto en la cátedra, en la mayoría de los casos siempre conviene un predictor local para los bucles y un predictor global para los `if`. Con esto en mente, como se mencionó anteriormente, nuestro código cuenta con bucles e `if`, por lo que estamos combinando predictor global y local. Si usamos solo un predictor local, fallaríamos muchas veces para los `if` que están dentro del bucle con la etiqueta `loop_j`, es decir que se aumentaría la cantidad de ciclos debido al fallo de predicción. Por otra parte si usamos el predictor por torneos que está compuesto por un predictor global y uno local, a simple vista podríamos pensar que es claro que sería el mejor predictor, pero nos está faltando algo muy importante. ¿Por qué es mejor este predictor?, podríamos llegar a pensar que el hecho mismo de elegir que predictor usar (global y local hablando del predictor por torneos) conllevaría más gastos de ciclos, pero esto en realidad no nos afecta tanto como lo haría predicir mal el salto. Y esto en realidad reduce el miss Rate haciendolo por supuesto más eficiente, debido a que en cada momemento en lo que hay un salto ya sea por `if` o por bucle, siempre estamos eligiendo el mejor predictor, lo cual es beneficioso usarlo en nuestro código dado que combina predictores globales y locales.
 
-Cabe mencionar que este gráfico si representa lo que esperábamos, basado por suepuesto y siempre manteniéndonos al margen de que nuestro código combina `if` y bucles, y según nuestros análisis también conbina el uso de predictores globales y locales.
+La razón es la siguienete: Nuestro código traducido mezcla tanto bucles como `if`, según nuestros análisis en la mayoría de los casos conviene un predictor local para los bucles y un predictor global para los `if`. Con esto en mente, como se mencionó anteriormente, nuestro código cuenta con bucles e `if`, por lo que nos conviene combinar un predictor local y uno global. Si usamos solo un predictor local, fallaríamos muchas veces para los `if` que están dentro del bucle con la etiqueta `loop_j`, es decir que se aumentaría la cantidad de fallas debido al fallo de predicción y por ende el miss Rate. Por otra parte si usamos el predictor por torneo que está compuesto por un predictor global y uno local, a simple vista podríamos pensar que es claro que sería el mejor predictor, pero nos está faltando algo muy importante. ¿Por qué es mejor este predictor?, podríamos llegar a pensar que el hecho mismo de elegir que predictor usar (global y local hablando del predictor por torneo) conllevaría más gastos de ciclos, pero esto en realidad no nos afecta tanto como lo haría predicir mal el salto. Y esto en realidad reduce el miss Rate haciéndolo por supuesto más eficiente, debido a que en cada momemento en lo que hay un salto ya sea por `if` o por bucle, siempre estamos eligiendo el mejor predictor, lo cual es beneficioso para nuestro código dado que combina predictores globales y locales.
+
+Cabe mencionar que este gráfico si representa lo que esperábamos, basado por suepuesto y siempre manteniéndonos al margen de que nuestro código combina `if` y bucles, y según nuestros análisis también conbina el uso de predictores globales y locales. Notemos sin embargo que existe una diferencia en el predictor local según los resultados de la simulación con respecto a los calculados por nosotros, dándonos una diferencia insignificante lo cual puede suceder por dos motivos:
+
+- El márgen de error de GEM5.
+- El predictor local puede llegar a funcionar mejor para algunos casos que quizás no estemos contemplando.
 
 <!-- Ejecutar la simulación utilizando el procesador out-of-order con las características d
 la caché que obtuvo la mejor performance en el punto c) y un predictor de saltos po
