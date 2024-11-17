@@ -479,14 +479,15 @@ Notemos que el gráfico demuestra esquemáticamente lo mencionado anteriormente,
 
 Observemos que en el gráfico la cantidad de ciclos simulados en 2, 4 y 8 vías son similares.
 
-<!-- TODO:
-Al dividir la cache en más vías
-
 Analicemos esto en detalle:
-Por como es nuestro programa, estamos accediendo siempre por cada casilla del arreglo a las posiciones izquierda, derecha, arriba y abajo del arreglo, por esta razón simplemente nos alcanza con que la cache tenga aproximadamente un tamaño mayor o igual al que hay entre la casilla arriba y la casilla abajo, es decir 1024 bytes (1KB). Para que contemple los casos especiales, podemos pensar un tamaño fijo de 2048 bytes (2KB) ahorrándonos los problemas.
 
-Como dijimos en un principio con las caches de 2, 4 y 8 vías, las cantidades de ciclos simulados son similirares debido a que tenemos siempre una cache de 32KB y aumentar la cantidad de vías reduce el tamaño de la cahce de cada vía, pero en el peor de los casos tendremos un tamaña de 32KB/8 = 4KB que es mayor al margen que de 2KB que es lo que necesitamos para aprovechar la cache.
-TODO:  -->
+<!-- TODO: Terminar esto -->
+
+Por como es nuestro programa, estamos accediendo siempre por cada casilla del arreglo a las posiciones izquierda, derecha, arriba y abajo del arreglo, por esta razón simplemente nos alcanza con que la cache tenga en el mejor de los casos 3 bloques y en el peor de los casos 4 bloques, por lo que cada 8 iteraciones se harán miss, ya que una línea de cache tiene 64 bytes y las palabras de nuestro arreglo son de 8 bytes.
+
+<!-- TODO: Terminar esto -->
+<!--
+ Como dijimos en un principio con las caches de 2, 4 y 8 vías, las cantidades de ciclos simulados son similirares debido a que tenemos siempre una cache de 32KB y aumentar la cantidad de vías reduce el tamaño de la cahce de cada vía, pero en el peor de los casos tendremos un tamaña de 32KB/8 = 4KB que es mayor al margen que de 2KB que es lo que necesitamos para aprovechar la cache. -->
 
 ![Ciclos de CPU en Stall](<stats/stats-ej2/ej2-c-img/Ciclos de CPU en Stall.png>)
 
