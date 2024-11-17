@@ -609,12 +609,17 @@ Cabe mencionar que este gráfico si representa lo que esperábamos, basado por s
 - El márgen de error de GEM5.
 - El predictor local puede llegar a funcionar mejor para algunos casos que quizás no estemos contemplando.
 
-<!-- Ejecutar la simulación utilizando el procesador out-of-order con las características d
-la caché que obtuvo la mejor performance en el punto c) y un predictor de saltos po
-torneos. Comparar los resultados obtenidos con el punto d). -->
+### Utilizando procesador out-of-order con predictor de salto.
+
+Analizando nuestro programa de la simulación física y en base a los resultados anteriores, nos damos cuenta que justamente usar un predictor por torneo mejora la predicción de los saltos para los `if` que están dentro del bucle con la etiqueta `loop_j` (verificación de casillas bordes).
+A continuación se presentan las diferencias que se dan al usar un procesador out-of-order. En este caso el código será ejecutado en un orden distinto debido al reordenamiento para mejorar la eficiencia, pero esto no conlleva necesariamente a que haya una mejora en cuanto a las predicciones de saltos y/o la eliminación de saltos de los `if` mencionados, dado que deben ejecutarse si o si, por lo que el predictor por torneo seguirá eligiendo el predictor global para estos casos, manteniendo así la misma eficiencia para predecir los saltos y por ende mantener el mismo miss Rate.
+
+Veamos los resultados obtenidos al correr la simulación.
+
+![Miss Rate por Predictor de saltos](<stats/stats-ej2/ej2-e-img/Miss Rate por Predictor de saltos.png>)
+
+Como se puede observar, el miss Rate sigue siendo el mismo tanto para el procesador out-of-order como el in-order con un predictor por torneo. (Notar que se agregó también el miss Rate del procesador in-order con predictor local para tener una mejor referencia de cuánto mejora con un predictor por torneo ya sea en un procesador out-of-order o in-order).
 
 ![Ciclos Simulados](<stats/stats-ej2/ej2-e-img/Ciclos Simulados.png>)
-![Ciclos de CPU en Stall](<stats/stats-ej2/ej2-e-img/Ciclos de CPU en Stall.png>)
-![Dcache Hits](<stats/stats-ej2/ej2-e-img/Dcache Hits.png>)
-![Dcache ReadReq Hits](<stats/stats-ej2/ej2-e-img/Dcache ReadReq Hits.png>)
-![Miss Rate por Predictor de saltos](<stats/stats-ej2/ej2-e-img/Miss Rate por Predictor de saltos.png>)
+
+Vale la pena destacar la cantidad de ciclos simulados según cada caso, en donde podemos observar una mejora abismal del procesador out-of-order frente al in-order, esto se debe a que aprovechamos al máximo la cantidad de instrucciones ejecutadas reduciendo significativamente la cantidad de stalls (tiempo de no hacer nada en el micro). También se puede observar que existe una mejora de un predictor local a uno por torneo en un procesador in-order, aunque la diferencia no se llega a notar en el gráfico, ésta es aproximadamente de 13.000 ciclos, y se debe a los casos de fallas por una mala predicción del predictor local.
