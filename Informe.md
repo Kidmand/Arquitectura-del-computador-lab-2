@@ -503,18 +503,6 @@ Luego se nos suma una escritura y una lectura por cada casilla dado que compiamo
 
 ### Análisis de los predictores de saltos.
 
-<!-- En este punto se pretende analizar la diferencia al usar dos predictores de saltos
-distintos: local y predictor por torneos (que está compuesto por un predictor local y
-uno global). En primer lugar se debe analizar el código e intentar deducir qué tipo de
-predictor (local o global) funcionará mejor en cada tipo de salto y cuánto podría
-mejorar usar el de torneo. Correr el código con el predator local por defecto y
-obtener el miss rate calculado como:
-condIncorrect / (condPredicted + condIncorrect)
-Luego elegir el predictor por torneos (similar al utilizado en el procesador alpha
-21264) y obtener nuevamente el miss rate. En ambos casos utilizar las
-características de la caché que obtuvo la mejor performance en el punto c). Analizar
-si los resultados se corresponden con lo esperado y justificar -->
-
 Para el primer bucle con la etiqueta `loop_init_t_amb` nos conviene claramente el predictor local dado que se equivoca una vez al salir, dependiendo obviamente de como esté inicializado el estado, de igual forma en el peor caso fallaría dos veces.
 
 Para el segundo bucle con la etiqueta `loop_k`, también nos conviene el predictor local. Misma explicación que en el anterior.
