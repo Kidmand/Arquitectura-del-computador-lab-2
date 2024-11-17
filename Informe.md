@@ -612,3 +612,9 @@ Cabe mencionar que este gráfico si representa lo que esperábamos, basado por s
 <!-- Ejecutar la simulación utilizando el procesador out-of-order con las características d
 la caché que obtuvo la mejor performance en el punto c) y un predictor de saltos po
 torneos. Comparar los resultados obtenidos con el punto d). -->
+
+![Ciclos Simulados](<stats/stats-ej2/ej2-e-img/Ciclos Simulados.png>)
+![Ciclos de CPU en Stall](<stats/stats-ej2/ej2-e-img/Ciclos de CPU en Stall.png>)
+![Dcache Hits](<stats/stats-ej2/ej2-e-img/Dcache Hits.png>)
+![Dcache ReadReq Hits](<stats/stats-ej2/ej2-e-img/Dcache ReadReq Hits.png>)
+![Miss Rate por Predictor de saltos](<stats/stats-ej2/ej2-e-img/Miss Rate por Predictor de saltos.png>)
