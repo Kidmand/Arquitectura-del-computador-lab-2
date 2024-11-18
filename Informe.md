@@ -53,7 +53,7 @@ Esto es así ya que:
 - Por como están inicializados los arreglos en memoria ram, estos se encuentran uno seguido al otro, es decir está primero el arreglo X, luego el arreglo Y, y finalmente el Z.
 - Como los tamaños de cache son múltiplos de 32kB (son de 8kB, 16kB, y 32kB), analizando el caso de una sola vía, tenemos que cada i-esimo elemento del arreglo X,Y y Z caen justamente en la misma linea, pisando siempre el bloque traído por el anterior arreglo.
 
-Ahora, ¿por que el rendimiento es mejor con dos vias?
+Ahora, ¿por que el rendimiento es mejor con dos vías?
 Aunque parezca que debería mejorar siempre, no es así, ya que depende de la política de reemplazo de la cache.
 Por ejemplo, si la política es reemplazar el bloque más viejo, pasaría lo siguiente:
 
@@ -87,7 +87,7 @@ A su vez podemos notar que la cantidad de ciclos totales de la simulación está
 
 Esto es así ya que el tiempo que se tarda en traer datos de memoria principal puede llegar a ocupar varios ciclos de clock, en los que si no hay ninguna instrucción que se pueda procesar, se stolleara el micro. Por lo tanto si ocurren mas hits en cache se traerán los datos en menos tiempo, osea en menos ciclos de clock, y por lo tanto habrá menor cantidad de ciclos de CPU inactivos/stolleados.
 
-Notar que hay un comportamiento raro con la cache de 4 y 8 vías, las gráficas no representan lo que esperamos. Pero vamos a contar lo que esperabamos igualmente. Lo que debería pasar con 4 vías es que se reduzcan la cantinda de ciclos simulados ya que se reducen los reemplazos de bloques. Tenemos 3 arreglos, dos que leemos y 1 que escribimos de forma secuencial y en bucle en nuestro programa, por lo tanto deberíamos tener más hits en cache de datos al aumentar la cantidad de vías a 4. Y por ello la cantidad de ciclos simulados debería disminuir. Luego con 8 vías debería mantenerse igual que con 4 vías, ya que solo necesitamos 3 bloques en cache por como es nuestro programa.
+Notar que hay un comportamiento raro con la cache de 4 y 8 vías, las gráficas no representan lo que esperamos. Pero vamos a contar lo que esperábamos igualmente. Lo que debería pasar con 4 vías es que se reduzcan la cantidad de ciclos simulados ya que se reducen los reemplazos de bloques. Tenemos 3 arreglos, dos que leemos y 1 que escribimos de forma secuencial y en bucle en nuestro programa, por lo tanto deberíamos tener más hits en cache de datos al aumentar la cantidad de vías a 4. Y por ello la cantidad de ciclos simulados debería disminuir. Luego con 8 vías debería mantenerse igual que con 4 vías, ya que solo necesitamos 3 bloques en cache por como es nuestro programa.
 La otra parte rara es que los gráficos tanto de los stall y hits están inversamente correlacionados, es decir que a más hits esperaríamos menos stall, pero eso no se ve contemplado en los gráficos, de hecho lo que se ve es todo lo contrario.
 
 Como dijimos, en nuestro caso, deberían aumentar los hits en cache de datos al aumentar las vías. Y por lo tanto estar la cantidad de ciclos simulados y ciclos inactivos inversamente correlacionados con la cantidad de hits en cache de datos.
@@ -96,7 +96,7 @@ Como dijimos, en nuestro caso, deberían aumentar los hits en cache de datos al 
 
 Como podemos ver, se cumplió lo que dijimos en el caso de 1 y 2 vías.
 
-Para el caso de 4 y 8 vías, vemos como aumenta la cantidad de hits, algo que esperabamos al tener mas vías y por como es nuestro programa, 3 arreglos, dos que leemos y 1 que escribimos y todo esto en un bucle. Exprimiendo al máximo la cache de datos.
+Para el caso de 4 y 8 vías, vemos como aumenta la cantidad de hits, algo que esperábamos al tener mas vías y por como es nuestro programa, 3 arreglos, dos que leemos y 1 que escribimos y todo esto en un bucle. Exprimiendo al máximo la cache de datos.
 
 Recordando lo que dijimos antes, con 1 vía hay constantes reemplazos, por lo tanto no deberíamos tener hits más que los valores que entran en el rango de error de la simulación. Lo que en cierta medida se cumple.
 Luego para el caso de 2 vías, vemos como mejora la cantidad de hits porque justamente disminuyen los reemplazos de bloques.
@@ -297,7 +297,7 @@ Ahora veamos algunos gráficos que representan los resultados obtenidos con esta
 
 ![Ciclos Simulados](<stats/stats-ej1-e-img/Ciclos Simulados.png>)
 
-Como podemos ver en este gŕafico, existe una mejora significativa en cuanto a los ciclos en el caso del código original (sin loop unrolling) respecto del código mejorado usando la técnica de loop unrolling de 2, 4 y 8 respectivamente. También podemos notar que el caso de 2 representa la mejora más significativa en cuanto a ciclos. Según lo que analizamos, concluímos que debería haber una mejora incluso mayor o igual (menor o igual a cantidad de ciclos), pero nunca empeorar en el loop unrolling de 4 o incluso 8, ya que estamos evitando los saltos. Este comportamiento es lo que esperábamos, pero no está representado por los gráficos, lo cual es algo extraño.
+Como podemos ver en este gráfico, existe una mejora significativa en cuanto a los ciclos en el caso del código original (sin loop unrolling) respecto del código mejorado usando la técnica de loop unrolling de 2, 4 y 8 respectivamente. También podemos notar que el caso de 2 representa la mejora más significativa en cuanto a ciclos. Según lo que analizamos, concluimos que debería haber una mejora incluso mayor o igual (menor o igual a cantidad de ciclos), pero nunca empeorar en el loop unrolling de 4 o incluso 8, ya que estamos evitando los saltos. Este comportamiento es lo que esperábamos, pero no está representado por los gráficos, lo cual es algo extraño.
 
 ![Ciclos de CPU en Stall](<stats/stats-ej1-e-img/Ciclos de CPU en Stall.png>)
 
@@ -310,17 +310,17 @@ Igualmente podemos ver algo que esperábamos y es que la cantidad de stalls dism
 
 Por otra parte, notemos que este gráfico sí representa lo que esperábamos (aunque seguimos teniendo valores en el margen de error de GEM5) por lo cual sólo la parte del código sin loop unrolling (loop unrolling de 0) representa correctamente los resultados obtenidos, lo cual puede entenderse fácilmente debido a que una cache de dos vías se dan muchos más hits y no se tiene que hacer un miss por cada acceso.
 
-### Analizando y ejecunado el código anterior usando un procesador out-of-order.
+### Analizando y ejecutando el código anterior usando un procesador out-of-order.
 
 Como veremos en estos gráficos, se representa esquemáticamente la diferencia entre un procesador in-order y uno out-of-order.
 
 ![Ciclos Simulados](<stats/stats-ej1-f-img/Ciclos Simulados.png>)
 
-Analizando, concluímos que el comportamiento que eseperábamos, en este caso sí se está mostrando correctamente, dado que en un procesador out-of-order, el ordenamiento de las instrucciones es automático/dinámico, es decir se ejecuta de una manera más óptima. Y esta mejora es para todos los casos, tenga o no loop unrolling. Debido a que las únicas mejoras que le hicimos al códidgo fue usando solo las técnicas de loop unrolling, register remainig y ninguna más.
+Analizando, concluimos que el comportamiento que esperábamos, en este caso sí se está mostrando correctamente, dado que en un procesador out-of-order, el ordenamiento de las instrucciones es automático/dinámico, es decir se ejecuta de una manera más óptima. Y esta mejora es para todos los casos, tenga o no loop unrolling. Debido a que las únicas mejoras que le hicimos al código fue usando solo las técnicas de loop unrolling, register remainig y ninguna más.
 
 ![Ciclos de CPU en Stall](<stats/stats-ej1-f-img/Ciclos de CPU en Stall.png>)
 
-Al igual que antes, podemos ver una disminución muy significativa en cuanto a los stalls en los distintos casos, esto también puede entenderse fácilmente debido a que en el procesador out-of-order al tener un ordenamiento bastante óptimo, ejecuta de manera eficiente las intrucciones reduciendo de esta manera, la cantidad de stall. Como se mencionó anteriromente, esto no es idependiente para cada caso, sino que en todos los casos el comportamiento es similar. Siguiendo con esta misma idea, nos damos cuenta que para este procesador out-of-order, puede soportar mejores técnicas de optimización que las que aplicamos al código.
+Al igual que antes, podemos ver una disminución muy significativa en cuanto a los stalls en los distintos casos, esto también puede entenderse fácilmente debido a que en el procesador out-of-order al tener un ordenamiento bastante óptimo, ejecuta de manera eficiente las instrucciones reduciendo de esta manera, la cantidad de stalls. Como se mencionó anteriormente, esto no es independiente para cada caso, sino que en todos los casos el comportamiento es similar. Siguiendo con esta misma idea, nos damos cuenta que para este procesador out-of-order, puede soportar mejores técnicas de optimización que las que aplicamos al código.
 Por esta razón el comportamiento de los resultados tanto de los ciclos como el de los stalls es similar para los casos de loop unrolling de 2, 4, 8 y también para el caso del código sin loop unrolling (loop unrolling de 0).
 
 ![Dcache Hits](<stats/stats-ej1-f-img/Dcache Hits.png>)
@@ -481,8 +481,8 @@ Observemos que en el gráfico la cantidad de ciclos simulados en 2, 4 y 8 vías 
 
 Analicemos esto en detalle:
 
-Por como es nuestro programa, estamos accediendo siempre por cada casilla del arreglo a las posiciones izquierda, derecha, arriba y abajo del arreglo, por esta razón simplemente nos alcanza con que la cache tenga en el mejor de los casos 3 bloques y en el peor de los casos 4 bloques, por lo que cada 8 iteraciones se harán miss, ya que una línea de cache tiene 64 bytes y las palabras de nuestro arreglo son de 8 bytes. Son 3 bloques porque necesitamos 1 bloque para la casilla de arriba, un bloque para la casilla de abajo y un bloque para la casilla de la izquierda y la derecha y en el peor de los casos un bloque para cada uno (i.e dos bloques), y como nos movemos secuencialmente en el arrgelo también lo hacemos en los 3/4 bloques, es decir que accedemos alas palabras de los bloques de manera secuencial
-Los bloques pueden estar sobre una misma vía o pueden estar sobre vías distitas. Por esta razón, al dividir la cache en más vías, el comportamiento sigue siendo el mismo que una cache asociativa por conjuntos de dos vías.
+Por como es nuestro programa, estamos accediendo siempre por cada casilla del arreglo a las posiciones izquierda, derecha, arriba y abajo del arreglo, por esta razón simplemente nos alcanza con que la cache tenga en el mejor de los casos 3 bloques y en el peor de los casos 4 bloques, por lo que cada 8 iteraciones se harán miss, ya que una línea de cache tiene 64 bytes y las palabras de nuestro arreglo son de 8 bytes. Son 3 bloques porque necesitamos 1 bloque para la casilla de arriba, un bloque para la casilla de abajo y un bloque para la casilla de la izquierda y la derecha y en el peor de los casos un bloque para cada uno (i.e dos bloques), y como nos movemos secuencialmente en el arreglo también lo hacemos en los 3/4 bloques, es decir que accedemos alas palabras de los bloques de manera secuencial
+Los bloques pueden estar sobre una misma vía o pueden estar sobre vías distintas. Por esta razón, al dividir la cache en más vías, el comportamiento sigue siendo el mismo que una cache asociativa por conjuntos de dos vías.
 
 Como dijimos en un principio con las caches de 2, 4 y 8 vías, las cantidades de ciclos simulados son similirares debido a que tenemos siempre una cache de 32KB y aumentar la cantidad de vías reduce el tamaño de la cahce de cada vía, pero en el peor de los casos tendremos un tamaño de 32KB/8 = 4KB que es mayor al margen de lo que necesitamos.
 
@@ -498,8 +498,8 @@ Al igual que el gráfico de stalls, también podemos ver una correlación invers
 
 ![Dcache ReadReq Hits](<stats/stats-ej2/ej2-c-img/Dcache ReadReq Hits.png>)
 
-Comparando este gráfico con el anterior notamos una relación que nos permite identificar aproximadamente 5 lecturas y 2 de escrituras por cada casillas (teniendo en cuenta lo dos arreglos). Esto sería un 70% más de veces de hits de lectura que de escritura, algo que se relaciona con nuestro programa dado que por cada casilla que no es borde leemos las 4 casillas adyascentes y escribimos una vez el arreglo temporal.
-Luego se nos suma una escritura y una lectura por cada casilla dado que compiamos el arreglo temporal al arreglo original.
+Comparando este gráfico con el anterior notamos una relación que nos permite identificar aproximadamente 5 lecturas y 2 de escrituras por cada casillas (teniendo en cuenta lo dos arreglos). Esto sería un 70% más de veces de hits de lectura que de escritura, algo que se relaciona con nuestro programa dado que por cada casilla que no es borde leemos las 4 casillas adyacentes y escribimos una vez el arreglo temporal.
+Luego se nos suma una escritura y una lectura por cada casilla dado que copiamos el arreglo temporal al arreglo original.
 
 ### Análisis de los predictores de saltos.
 
@@ -511,9 +511,9 @@ Para el tercer bucle con la etiqueta `loop_i` anidado al bucle con la etiqueta `
 
 Para el cuarto bucle con la etiqueta `loop_j` anidado al bucle con la etiqueta `loop_i`, también nos conviene el predictor local. Misma explicación que lo anterior.
 
-Para el primer `if` dentro del bucle con la etiqeuta `loop_j`, es decir `if ((i * N + j) != (FC_X * N + FC_Y))` nos conviene el predictor local debido a que la fuenta de calor es única y estática por lo que falla una vez.
+Para el primer `if` dentro del bucle con la etiqueta `loop_j`, es decir `if ((i * N + j) != (FC_X * N + FC_Y))` nos conviene el predictor local debido a que la fuente de calor es única y estática por lo que falla una vez.
 
-Para los `if` que verifican si las casillas adyascentes son un borde nos conviene usar predictor global, dado que si la casilla tiene un borde superior, no va a tener una casilla borde inferior y viceversa. Luego si tenemos una casilla con borde a la derecha, no tendrá un borde a la izquierda y viceversa. Y dado que esto se repite todo el tiempo, nos da a entender que el mejor predictor a usar es el global para este caso.
+Para los `if` que verifican si las casillas adyacentes son un borde nos conviene usar predictor global, dado que si la casilla tiene un borde superior, no va a tener una casilla borde inferior y viceversa. Luego si tenemos una casilla con borde a la derecha, no tendrá un borde a la izquierda y viceversa. Y dado que esto se repite todo el tiempo, nos da a entender que el mejor predictor a usar es el global para este caso.
 
 ```asm
 sum = 0;
@@ -541,7 +541,7 @@ else
 El último bucle con la etiqueta `loop_h` que está anidado al bucle con la etiqueta `loop_k` nos conviene el predictor local, y el `if` que está dentro de este bucle, también nos conviene un predictor local, dado que se equivoca una vez al salir, dependiendo obviamente de como esté inicializado el estado, de igual forma en el peor caso fallaría dos veces.
 Para el caso del `if`, este fallaría una vez porque compara la coordenadas de la fuente y sería el peor caso.
 
-### Usando predictor global y comparando resultados con el predictor local.
+### Usando predictor por torneos y comparando resultados con el predictor local.
 
 En esta parte se pretende mostrar la diferencia en cuanto a eficiencia de los distintos predictores de saltos (local y por torneo) y analizar esta mejora y porqué se produce, para ello primero vamos a hacer un análisis no tan exhaustivo y de manera manual para después comparar con los resultados de la simulación.
 
@@ -566,14 +566,14 @@ Los cálculos que hicimos para un predictor local fueron:
 - 1 falla del bucle de inicialización.
 - 1 falla del bucle con la etiqueta `loop_k`.
 - Ahora veamos los bucles anidados, por eso se multiplica por 10. Tenemos 1 falla para el primer bucle anidado, y 64 del segundo bucle anidado.
-- Se tiene 1 falla del `if` dentro del bucle anidado `loop_j` poque hay una única fuente y es estática.
+- Se tiene 1 falla del `if` dentro del bucle anidado `loop_j` porque hay una única fuente y es estática.
 - Se tiene 64 fallas por cada `if` que verifican los bordes, y como son 4 se multiplica por 4.
 - luego tenemos el bucle con la etiqueta `loop_h` anidado al bucle con la etiqueta `loop_k` que falla una vez.
 - Dentro del bucle con la etiqueta `loop_h` se encuentra un `if` que falla una vez.
 
 El mis Rate del predictor local nos quedaría: 3242/332386 = 0,00975372
 
-Ahora analicemos el predictor por torneo cosiderando lo que pensamos anteriormente, referido al que el predictor global andaría mejor dentro de los if que están dentro del bucle con la etiqeuta `loop_j`.
+Ahora analicemos el predictor por torneo considerando lo que pensamos anteriormente, referido al que el predictor global andaría mejor dentro de los if que están dentro del bucle con la etiqueta `loop_j`.
 Básicamente lo que hicimos en este fue cambiar el predictor de los if mencionados de local a global quedándonos cuentas similares, cambiando lo siguiente:
 
 - Predictor global (64x64−1)x4
@@ -602,11 +602,11 @@ Los resultados obtenidos en la simulación son:
 
 Como se puede ver en este gráfico, existe una mejora en términos del miss Rate del predictor por torneo frente al predictor local.
 
-La razón es la siguienete: Nuestro código traducido mezcla tanto bucles como `if`, según nuestros análisis en la mayoría de los casos conviene un predictor local para los bucles y un predictor global para los `if`. Con esto en mente, como se mencionó anteriormente, nuestro código cuenta con bucles e `if`, por lo que nos conviene combinar un predictor local y uno global. Si usamos solo un predictor local, fallaríamos muchas veces para los `if` que están dentro del bucle con la etiqueta `loop_j`, es decir que se aumentaría la cantidad de fallas debido al fallo de predicción y por ende el miss Rate. Por otra parte si usamos el predictor por torneo que está compuesto por un predictor global y uno local, a simple vista podríamos pensar que es claro que sería el mejor predictor, pero nos está faltando algo muy importante. ¿Por qué es mejor este predictor?, podríamos llegar a pensar que el hecho mismo de elegir que predictor usar (global y local hablando del predictor por torneo) conllevaría más gastos de ciclos, pero esto en realidad no nos afecta tanto como lo haría predicir mal el salto. Y esto en realidad reduce el miss Rate haciéndolo por supuesto más eficiente, debido a que en cada momemento en lo que hay un salto ya sea por `if` o por bucle, siempre estamos eligiendo el mejor predictor, lo cual es beneficioso para nuestro código dado que combina predictores globales y locales.
+La razón es la siguiente: Nuestro código traducido mezcla tanto bucles como `if`, según nuestros análisis en la mayoría de los casos conviene un predictor local para los bucles y un predictor global para los `if`. Con esto en mente, como se mencionó anteriormente, nuestro código cuenta con bucles e `if`, por lo que nos conviene combinar un predictor local y uno global. Si usamos solo un predictor local, fallaríamos muchas veces para los `if` que están dentro del bucle con la etiqueta `loop_j`, es decir que se aumentaría la cantidad de fallas debido al fallo de predicción y por ende el miss Rate. Por otra parte si usamos el predictor por torneo que está compuesto por un predictor global y uno local, a simple vista podríamos pensar que es claro que sería el mejor predictor, pero nos está faltando algo muy importante. ¿Por qué es mejor este predictor?, podríamos llegar a pensar que el hecho mismo de elegir que predictor usar (global y local hablando del predictor por torneo) conllevaría más gastos de ciclos, pero esto en realidad no nos afecta tanto como lo haría predecir mal el salto. Y esto en realidad reduce el miss Rate haciéndolo por supuesto más eficiente, debido a que en cada momento en el que hay un salto ya sea por `if` o por bucle, siempre estamos eligiendo el mejor predictor, lo cual es beneficioso para nuestro código dado que combina predictores globales y locales.
 
-Cabe mencionar que este gráfico si representa lo que esperábamos, basado por suepuesto y siempre manteniéndonos al margen de que nuestro código combina `if` y bucles, y según nuestros análisis también conbina el uso de predictores globales y locales. Notemos sin embargo que existe una diferencia en el predictor local según los resultados de la simulación con respecto a los calculados por nosotros, dándonos una diferencia insignificante lo cual puede suceder por dos motivos:
+Cabe mencionar que este gráfico si representa lo que esperábamos, por supuesto siempre manteniéndonos al margen de que nuestro código combina `if` y bucles, y según nuestros análisis también combina el uso de predictores globales y locales. Notemos sin embargo que existe una diferencia en el predictor local según los resultados de la simulación con respecto a los calculados por nosotros, dándonos una diferencia insignificante lo cual puede suceder por dos motivos:
 
-- El márgen de error de GEM5.
+- El margen de error de GEM5.
 - El predictor local puede llegar a funcionar mejor para algunos casos que quizás no estemos contemplando.
 
 ### Utilizando procesador out-of-order con predictor de salto.
