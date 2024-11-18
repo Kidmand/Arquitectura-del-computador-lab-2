@@ -6,7 +6,7 @@ RESULT_PATH="./se_results/"
 
 
 # Definir el benchmark a correr, opciones: daxpy, simFisica, bubbleSort
-BENCHMARK="daxpy"
+BENCHMARK="bubbleSort"
 
 # Definir el procesador a utilizar, opciones: in_order, out_of_order, etc.
 PROCESSOR="in_order"

@@ -21,14 +21,14 @@ main:
 	// Initilize randomply the array
 	ldr     x0, =Array	    // Load array base address to x0
 	ldr     x6, N               // Load the number of elements into x2
-    	mov     x1, 1234            // Set the seed value
+    mov     x1, 1234            // Set the seed value
 	mov 	x5, 0		    // Set array counter to 0
 
     	// LCG parameters (adjust as needed)
     	movz    x2, 0x19, lsl 16    //1664525         // Multiplier
-	movk	x2, 0x660D, lsl 0
+		movk	x2, 0x660D, lsl 0
     	movz    x3, 0x3C6E, lsl 16  // 1013904223      // Increment
-	movk 	x3, 0xF35F, lsl 0
+		movk 	x3, 0xF35F, lsl 0
     	movz    x4, 0xFFFF, lsl 16      // Modulus (maximum value)
         movk    x4, 0xFFFF, lsl 0      // Modulus (maximum value)
 
@@ -48,12 +48,49 @@ random_array:
 	mov	x0, 0
 	bl	m5_dump_stats
 
-    	ldr     x2, N
-    	ldr     x1, =Array
+    	/*ldr     x2, N
+    	ldr     x1, =Array*/
+
+
+		ldr     X0, N
+    	ldr     x10, =Array 
 
 //---------------------- CODE HERE ------------------------------------
 
 
+MOV X1, #0          // X8 = i
+MOV X2, #0          // X9 = j
+SUB X3, X0, #1      // X3 = (N - 1)
+
+loop_i: 
+    CMP X1, X3
+    B.GE loop_i_end
+        MOV X2, #0                              // j = 0
+        SUB X4, X3, X1                          // X4 = N - i - 1 (límite para j)
+
+        loop_j: 
+            CMP X2, X4
+            B.GE loop_j_end
+                LDR X5, [X10, X2, LSL #3]       // arr[j]
+                ADD X6, X2, #1
+                LDR x7, [X10, X6, LSL #3]       // arr[j+1]
+
+                CMP X5, x7
+                B.LE fail_if                    // Si arr[j] <= arr[j+1], saltar intercambio
+
+                MOV X8, X5
+                STR X7, [X10, X2, LSL #3]       // arr[j] = arr[j+1]
+                STR X8, [X10, X6, LSL #3]       // arr[j+1] = arr[j]
+
+            fail_if:
+                ADD X2, X2, #1                  // j++
+                B loop_j
+
+        loop_j_end:
+            ADD X1, X1, #1                      // i++
+            B loop_i
+
+loop_i_end:
 
 //---------------------- END CODE -------------------------------------
 	mov 	x0, 0
