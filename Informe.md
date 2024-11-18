@@ -481,13 +481,12 @@ Observemos que en el gráfico la cantidad de ciclos simulados en 2, 4 y 8 vías 
 
 Analicemos esto en detalle:
 
-<!-- TODO: Terminar esto -->
+Por como es nuestro programa, estamos accediendo siempre por cada casilla del arreglo a las posiciones izquierda, derecha, arriba y abajo del arreglo, por esta razón simplemente nos alcanza con que la cache tenga en el mejor de los casos 3 bloques y en el peor de los casos 4 bloques, por lo que cada 8 iteraciones se harán miss, ya que una línea de cache tiene 64 bytes y las palabras de nuestro arreglo son de 8 bytes. Son 3 bloques porque necesitamos 1 bloque para la casilla de arriba, un bloque para la casilla de abajo y un bloque para la casilla de la izquierda y la derecha y en el peor de los casos un bloque para cada uno (i.e dos bloques), y como nos movemos secuencialmente en el arrgelo también lo hacemos en los 3/4 bloques, es decir que accedemos alas palabras de los bloques de manera secuencial
+Los bloques pueden estar sobre una misma vía o pueden estar sobre vías distitas. Por esta razón, al dividir la cache en más vías, el comportamiento sigue siendo el mismo que una cache asociativa por conjuntos de dos vías.
 
-Por como es nuestro programa, estamos accediendo siempre por cada casilla del arreglo a las posiciones izquierda, derecha, arriba y abajo del arreglo, por esta razón simplemente nos alcanza con que la cache tenga en el mejor de los casos 3 bloques y en el peor de los casos 4 bloques, por lo que cada 8 iteraciones se harán miss, ya que una línea de cache tiene 64 bytes y las palabras de nuestro arreglo son de 8 bytes.
+Como dijimos en un principio con las caches de 2, 4 y 8 vías, las cantidades de ciclos simulados son similirares debido a que tenemos siempre una cache de 32KB y aumentar la cantidad de vías reduce el tamaño de la cahce de cada vía, pero en el peor de los casos tendremos un tamaño de 32KB/8 = 4KB que es mayor al margen de lo que necesitamos.
 
-<!-- TODO: Terminar esto -->
-<!--
- Como dijimos en un principio con las caches de 2, 4 y 8 vías, las cantidades de ciclos simulados son similirares debido a que tenemos siempre una cache de 32KB y aumentar la cantidad de vías reduce el tamaño de la cahce de cada vía, pero en el peor de los casos tendremos un tamaña de 32KB/8 = 4KB que es mayor al margen que de 2KB que es lo que necesitamos para aprovechar la cache. -->
+Además como también estamos accediendo al arreglo original (x) y luego al arreglo temporal (x_temp), siempre tenemos que tener al menos dos vías para ver una mejora en cuanto ciclos.
 
 ![Ciclos de CPU en Stall](<stats/stats-ej2/ej2-c-img/Ciclos de CPU en Stall.png>)
 
