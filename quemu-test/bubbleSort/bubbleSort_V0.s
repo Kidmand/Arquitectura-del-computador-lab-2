@@ -83,9 +83,9 @@ loop_i:
                 CMP X5, x7
                 B.LE fail_if                    // Si arr[j] <= arr[j+1], saltar intercambio
 
-                MOV X8, X5
+                //MOV X8, X5                      // X8 = temp = arr[j] puede que no sea necesario
                 STR X7, [X10, X2, LSL #3]       // arr[j] = arr[j+1]
-                STR X8, [X10, X6, LSL #3]       // arr[j+1] = arr[j]
+                STR X5, [X10, X6, LSL #3]       // arr[j+1] = arr[j]
 
             fail_if:
                 ADD X2, X2, #1                  // j++
