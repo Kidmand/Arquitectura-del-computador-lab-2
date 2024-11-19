@@ -627,17 +627,83 @@ Vale la pena destacar la cantidad de ciclos simulados según cada caso, en donde
 ### Ejercicio 3
 
 En este ejercicio vamos a analizar como varían las distintas estadísticas y eficiencia, depenendiendo del procesador que usemos ya sea in-roder o out-of-order.
-También cuanto mejora o empeora usando la técnica de mejora de eliminar saltos mediante una nueva istrucción la cual es `CSEL`. 
+También cuanto mejora o empeora usando la técnica de eliminar saltos mediante una nueva istrucción la cual es `CSEL`.
+Previamente teníamos que hacer un algoritmo de oredenamiento, en este caso el de bubbleSort (ordenamiento por burbuja) y traducir este código a assembly.
+
+### Código del algoritmo de bubbleSort traducido.
+
+```arm
+MOV     X1, #0          // X1 = i
+MOV     X2, #0          // X2 = j
+SUB     X3, X0, #1      // X3 = (N - 1)
+
+loop_i:
+    CMP     X1, X3
+    B.GE    loop_i_end
+        MOV     X2, #0                          // j = 0
+        SUB     X4, X3, X1                      // X4 = N - i - 1 (límite para j)
+
+        loop_j:
+            CMP     X2, X4
+            B.GE    loop_j_end
+                LDR     X5, [X10, X2, LSL #3]   // arr[j]
+                ADD     X6, X2, #1
+                LDR     X7, [X10, X6, LSL #3]   // arr[j + 1]
+
+                CMP     X5, X7
+                B.LE    fail_if                 // Si arr[j] <= arr[j + 1], saltar intercambio
+
+                STR     X7, [X10, X2, LSL #3]   // arr[j] = arr[j + 1]
+                STR     X5, [X10, X6, LSL #3]   // arr[j + 1] = arr[j]
+
+            fail_if:
+                ADD     X2, X2, #1              // j++
+                B       loop_j
+
+        loop_j_end:
+            ADD     X1, X1, #1                  // i++
+            B       loop_i
+
+loop_i_end:
+```
+
+Y la siguiente parte es la que se modifica para usar la instrucción `CSEL` y evitar el salto con la etiqueta `fail_if`.
+
+```arm
+loop_j:
+            CMP     X2, X4
+            B.GE    loop_j_end
+                LDR     X5, [X10, X2, LSL #3]   // arr[j]
+                ADD     X6, X2, #1
+                LDR     X7, [X10, X6, LSL #3]   // arr[j + 1]
+
+                CMP     X5, X7                  // Compara arr[j] y arr[j + 1]
+                CSEL    X8, X5, X7, LE          // X8 = X5 si arr[j] <= arr[j+1] => (Es decir, no se hace nada.), X7 en caso contrario.
+                CSEL    X9, X7, X5, LE          // X9 = X7 si arr[j] <= arr[j+1] => (Es decir, no se hace nada.), X5 en caso contrario.
+
+                STR     X8, [X10, X2, LSL #3]   // arr[j] = arr[j + 1]
+                STR     X9, [X10, X6, LSL #3]   // arr[j + 1] = arr[j]
+
+                ADD     X2, X2, #1              // j++
+                B       loop_j
+
+        loop_j_end:
+```
+
+Ahora veamos como quedan los distintos gráficos que representan las estadísticas en los distintos casos.
 
 ![Ciclos Simulados](<stats/stats-ej3-img/Ciclos SImulados.png>)
 
-Como podemos ver en esta gráfica, hay una clara diferencia entre el procesador in-order frente al out-of-order. Esto ya se explicó en el ejercicio 2. El otro aspecto a considerar es el cambio entre usar la nueva instrucción `CSEL`. Como se puede apreciar, existe una mejora significativa usando la instrucción `CSEL`, también se puede observar una mejora usando dicha instrucción en el porcesador out-of-order frente al in-order.  
+Como podemos ver en esta gráfica, hay una clara diferencia entre el procesador in-order frente al out-of-order. Esto ya se explicó en el ejercicio 2. El otro aspecto a considerar es el cambio entre usar la nueva instrucción `CSEL`. Como se puede apreciar, existe una mejora significativa usando la instrucción `CSEL`, también se puede observar una mejora usando dicha instrucción en el porcesador out-of-order frente al in-order.
 
 <!-- NOTE: Chequear esto
-Notar que si implementamos las instrucciones CSEL, inevitablemente siempre vamos acceder a la memoria en ambos casos, tanto si el if falla como si no. 
-Es decir, que estamos ganando ciclos por no stolear el micro en caso de fallas en la predicción de salto, pero accedemos a la memoria sin hacer nada en caso de que el if falle. A la larga, la eficiencia debido a las fallas por mala predicción de salto es menor que la eficiencia debido al acceso a memoria sin hacer nada. 
+Notar que si implementamos las instrucciones CSEL, inevitablemente siempre vamos acceder a la memoria en ambos casos, tanto si el if falla como si no.
+Es decir, que estamos ganando ciclos por no stolear el micro en caso de fallas en la predicción de salto, pero accedemos a la memoria sin hacer nada en caso de que el if falle. A la larga, la eficiencia debido a las fallas por mala predicción de salto es menor que la eficiencia debido al acceso a memoria sin hacer nada.
 (Esto es lo que me parece a mi, puede que no, que sea lo contrario. De todos modos depende mucho del código. Por ejemplo en nuestro código, habrá muchas veces en las que accederemos a memoria sin hacer nada, esto puede tener un impacto bastante significativo comparado con una mala predicción de salto,aunque analizando mejor, accedemos la misma cantidad de veces a memoria sin hacer nada que la cantidad de fallas del predictor de saltos) -->
 
 ![Dcache Hits](<stats/stats-ej3-img/Dcache Hits.png>)
+
+En este gráfico podemos observar muy claramente la diferencia de hits de la cache de datos usando el código con `CSEL` y el procesador in-order. Para el resto de casos el comportamiento es similar y la cantidad de ciclos también, solo difieren de la cache de datos con el procesador in-order usando `CSEL` como se mencionó anteriormente.
+
 ![Dcache ReadReq Hits](<stats/stats-ej3-img/Dcache ReadReq Hits.png>)
 ![Ciclos de CPU en Stall](<stats/stats-ej3-img/Ciclos de CPU en Stall.png>)
