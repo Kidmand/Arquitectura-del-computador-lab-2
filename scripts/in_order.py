@@ -56,4 +56,4 @@ class L2(Cache):
 
 
 cpu_name = __name__
-cpu_spec = (HPI.HPI, ICache, DCache, L2, BP_local)
+cpu_spec = (HPI.HPI, ICache, DCache, L2, BP_tournament)
