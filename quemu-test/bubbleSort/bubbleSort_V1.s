@@ -65,14 +65,14 @@ NOTE: Usar lo siguiente para optimizar el código
 
 /*
 NOTE: Notar que si implementamos las instrucciones CSEL, inevitablemente siempre vamos 
-      a acceder a la memoria en ambos casos, tanto si el if falla como si no. 
+      acceder a la memoria en ambos casos, tanto si el if falla como si no. 
       Es decir, que estamos ganando ciclos por no stolear el micro en caso de fallas en la
       predicción de salto, pero accedemos a la memoria sin hacer nada en caso de que el if falle.
-      A la larga, la eficiencia debido a las fallas por mala predicción de salto son menor 
+      A la larga, la eficiencia debido a las fallas por mala predicción de salto es menor 
       que la eficiencia debido al acceso a memoria sin hacer nada. 
       (Esto es lo que me parece a mi, puede que no, que sea lo contrario. De todos modos depende mucho del código.
-      Por ejemplo en nuestro código, habrá muchas veces en la que accederemos a memoria sin hacer nada,
-      esto puede tener un impacto bastante algo comparado con una mala predicción de salto,
+      Por ejemplo en nuestro código, habrá muchas veces en las que accederemos a memoria sin hacer nada,
+      esto puede tener un impacto bastante significativo comparado con una mala predicción de salto,
       aunque analizando mejor, accedemos la misma cantidad de veces a memoria sin hacer nada que la cantidad de fallas
       del predictor de saltos)
       Por otra parte, los saltos de los bucles no se me ocurre como cambiarlos. 
