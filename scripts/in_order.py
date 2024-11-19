@@ -1,11 +1,12 @@
 import m5
 from m5.objects import *
 from common.cores.arm import HPI
- 
+
 
 class BP_local(LocalBP):
     localPredictorSize = 1024
     localCtrBits = 2
+
 
 class BP_tournament(TournamentBP):
     localPredictorSize = 64
@@ -20,6 +21,7 @@ class BP_tournament(TournamentBP):
     RASSize = 8
     instShiftAmt = 2
 
+
 class ICache(Cache):
     data_latency = 1
     tag_latency = 1
@@ -29,6 +31,7 @@ class ICache(Cache):
     size = "32kB"
     assoc = 2
 
+
 class DCache(Cache):
     data_latency = 1
     tag_latency = 1
@@ -36,9 +39,10 @@ class DCache(Cache):
     mshrs = 4
     tgts_per_mshr = 8
     size = "32kB"
-    assoc = 2
+    assoc = 1
     write_buffers = 4
     prefetcher = StridePrefetcher(queue_size=4, degree=4)
+
 
 class L2(Cache):
     data_latency = 13
@@ -50,6 +54,6 @@ class L2(Cache):
     assoc = 16
     write_buffers = 16
 
+
 cpu_name = __name__
 cpu_spec = (HPI.HPI, ICache, DCache, L2, BP_local)
-

@@ -71,14 +71,13 @@ loop_i:
                 ADD     X6, X2, #1
                 LDR     X7, [X10, X6, LSL #3]   // arr[j + 1]
 
-                CMP     X5, X7
-                B.LE    fail_if                 // Si arr[j] <= arr[j + 1], saltar intercambio
+                CMP     X5, X7                  // Compara arr[j] y arr[j + 1]
+                CSEL    X8, X5, X7, LE          // X8 = X5 si arr[j] <= arr[j+1] => (Es decir, no se hace nada.), X7 en caso contrario.
+                CSEL    X9, X7, X5, LE          // X9 = X7 si arr[j] <= arr[j+1] => (Es decir, no se hace nada.), X5 en caso contrario.
 
-                MOV     X8, X5
-                STR     X7, [X10, X2, LSL #3]   // arr[j] = arr[j + 1]
-                STR     X8, [X10, X6, LSL #3]   // arr[j + 1] = arr[j]
+                STR     X8, [X10, X2, LSL #3]   // arr[j] = arr[j + 1]
+                STR     X9, [X10, X6, LSL #3]   // arr[j + 1] = arr[j]
 
-            fail_if:
                 ADD     X2, X2, #1              // j++
                 B       loop_j
 
