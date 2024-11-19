@@ -1,6 +1,3 @@
-casos torneo cache de 32kB, csel
-vias 1
-
 simInsts                                                               6293509.0
 system.cpu_cluster.cpus.numCycles                                      5779256.0
 system.cpu_cluster.cpus.cpi                                            0.92
