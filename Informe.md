@@ -36,6 +36,8 @@ loop:
 end:
 ```
 
+<!-- NOTE: agregar inroducción -->
+
 Como se verá en cada gráfico, las estadísticas no cambian según el tamaño de la cache.
 Esto es así ya que en nuestro programa, accedemos (lectura/escritura) secuencialmente a cada uno de los elementos de los arreglos. Por lo tanto no volveremos a necesitar un bloque al que ya hemos accedido entero, entonces, no hace falta que persistan en cache ya que no lo volveremos a necesitar. Por lo tanto aumentar el tamaño de cache no surtirá ningún efecto en nuestras estadísticas. Hacerlo nos permitiría guardar más bloques, pero no nos hace falta ya que nosotros solo necesitamos guardar uno a la vez por arreglo (por decirlo de otra manera, podríamos usar solo una línea de la cache por arreglo e ir almacenando los bloques ahí continuadamente dado que accedemos secuencialmente al arreglo como se mencionó anteriormente).
 
@@ -90,7 +92,8 @@ Esto es así ya que el tiempo que se tarda en traer datos de memoria principal p
 Notar que hay un comportamiento raro con la cache de 4 y 8 vías, las gráficas no representan lo que esperamos. Pero vamos a contar lo que esperábamos igualmente. Lo que debería pasar con 4 vías es que se reduzcan la cantidad de ciclos simulados ya que se reducen los reemplazos de bloques. Tenemos 3 arreglos, dos que leemos y 1 que escribimos de forma secuencial y en bucle en nuestro programa, por lo tanto deberíamos tener más hits en cache de datos al aumentar la cantidad de vías a 4. Y por ello la cantidad de ciclos simulados debería disminuir. Luego con 8 vías debería mantenerse igual que con 4 vías, ya que solo necesitamos 3 bloques en cache por como es nuestro programa.
 La otra parte rara es que los gráficos tanto de los stall y hits están inversamente correlacionados, es decir que a más hits esperaríamos menos stall, pero eso no se ve contemplado en los gráficos, de hecho lo que se ve es todo lo contrario.
 
-Como dijimos, en nuestro caso, deberían aumentar los hits en cache de datos al aumentar las vías. Y por lo tanto estar la cantidad de ciclos simulados y ciclos inactivos inversamente correlacionados con la cantidad de hits en cache de datos.
+<!-- NOTE: Chequear si está bien -->
+<!-- Como dijimos, en nuestro caso, deberían aumentar los hits en cache de datos al aumentar las vías. Y por lo tanto estar la cantidad de ciclos simulados y ciclos inactivos inversamente correlacionados con la cantidad de hits en cache de datos. -->
 
 ![Dcache Hits](<stats/stats-ej1-img/Dcache Hits.png>)
 
@@ -106,12 +109,12 @@ Pero, ¿cuántos hits son de escritura y lectura?
 ![Dcache ReadReq Hits](<stats/stats-ej1-img/Dcache ReadReq Hits.png>)
 
 Como podemos observar, la cantidad de hits de lectura es mayor a la de escritura en todos los casos.
-Aproximadamente entre un 35% es de escritura, lo que concuerda con la proporción de nuestro código (leemos en X e Y y escribimos solo en Z).
+Aproximadamente un 35% es de escritura, lo que concuerda con la proporción de nuestro código (leemos en X e Y y escribimos solo en Z).
 Salvo con 2 vías donde la mayoría de los hits son de lectura. Esto es posible que sea por lo dicho anteriormente sobre la política de reemplazo de la cache. Si al haber 2 vías, se reemplazan siempre los bloques Z e Y entre si por ejemplo, entonces tendríamos este efecto.
 
 ### Mejorando el código de daxpy usando técnicas estáticas.
 
-En esta parte explicaremos la mejora que introdujimos en el código usando loop unrolling. Para un mejor entendimiento de la técnica usada, analizaremos más adelante comparando los resultados como esto varía dependiedo la cantidad de desenrrollado que usamos en el código del bucle.
+En esta parte explicaremos la mejora que introdujimos en el código usando loop unrolling y register remaning. Para un mejor entendimiento de la técnica usada, analizaremos más adelante comparando los resultados como esto varía dependiedo la cantidad de desenrrollado que usamos en el código del bucle.
 
 > LOOP UNROLLING DE 2
 
@@ -301,7 +304,7 @@ Como podemos ver en este gráfico, existe una mejora significativa en cuanto a l
 
 ![Ciclos de CPU en Stall](<stats/stats-ej1-e-img/Ciclos de CPU en Stall.png>)
 
-De manera similar en este gráfico lo que esperábamos era tener una menor cantidad de stalls a medidad que el loop unrollign aumentara.
+De manera similar en este gráfico lo que esperábamos era tener una menor cantidad de stalls a medida que el loop unrolling aumentara.
 Cosa que al igual que antes los gráficos no están representando esta situación, lo que también es algo muy extraño.  
 Porque además no solo que aumenta entre los casos de 2, 4 y 8, sino que se está teniendo un comportamiento incluso peor en los casos de 4 y 8 con respecto al código original (sin loop unrolling). Lo cual es algo aún más extraño.
 Igualmente podemos ver algo que esperábamos y es que la cantidad de stalls disminuye para el caso de loop unrroling de 2.
@@ -316,16 +319,16 @@ Como veremos en estos gráficos, se representa esquemáticamente la diferencia e
 
 ![Ciclos Simulados](<stats/stats-ej1-f-img/Ciclos Simulados.png>)
 
-Analizando, concluimos que el comportamiento que esperábamos, en este caso sí se está mostrando correctamente, dado que en un procesador out-of-order, el ordenamiento de las instrucciones es automático/dinámico, es decir se ejecuta de una manera más óptima. Y esta mejora es para todos los casos, tenga o no loop unrolling. Debido a que las únicas mejoras que le hicimos al código fue usando solo las técnicas de loop unrolling, register remainig y ninguna más.
+Analizando, concluimos que el comportamiento que esperábamos, en este caso sí se está mostrando correctamente, dado que en un procesador out-of-order, el ordenamiento de las instrucciones es automático/dinámico, es decir se ejecuta de una manera más óptima. Y esta mejora es para todos los casos, tenga o no loop unrolling. Debido a que las únicas mejoras que le hicimos al código fue usando solo las técnicas de loop unrolling, register remaining y ninguna más.
 
 ![Ciclos de CPU en Stall](<stats/stats-ej1-f-img/Ciclos de CPU en Stall.png>)
 
-Al igual que antes, podemos ver una disminución muy significativa en cuanto a los stalls en los distintos casos, esto también puede entenderse fácilmente debido a que en el procesador out-of-order al tener un ordenamiento bastante óptimo, ejecuta de manera eficiente las instrucciones reduciendo de esta manera, la cantidad de stalls. Como se mencionó anteriormente, esto no es independiente para cada caso, sino que en todos los casos el comportamiento es similar. Siguiendo con esta misma idea, nos damos cuenta que para este procesador out-of-order, puede soportar mejores técnicas de optimización que las que aplicamos al código.
+Al igual que antes, podemos ver una disminución muy significativa en cuanto a los stalls en los distintos casos, esto también puede entenderse fácilmente debido a que en el procesador out-of-order al tener un ordenamiento bastante óptimo, ejecuta de manera eficiente las instrucciones reduciendo de esta manera, la cantidad de stalls. Como se mencionó anteriormente, esto no es independiente para cada caso, sino que en todos los casos el comportamiento es similar. Siguiendo con esta misma idea, nos damos cuenta que este procesador out-of-order, puede soportar mejores técnicas de optimización que las que aplicamos al código.
 Por esta razón el comportamiento de los resultados tanto de los ciclos como el de los stalls es similar para los casos de loop unrolling de 2, 4, 8 y también para el caso del código sin loop unrolling (loop unrolling de 0).
 
 ![Dcache Hits](<stats/stats-ej1-f-img/Dcache Hits.png>)
 
-En base a lo analizado, creemos que el procesador que estamos usando para simular soporta (loop unrolling). Por esta razón podemos ver en el gráfico que el caso del código sin loop unrolling, la cantidad de hits es mayor para los casos del código con loop unrolling de 2, 4 y 8. De esta manera, deducimos que para el caso del código sin loop unrolling se está haciendo lo más óptimo posible, y en los otros no, debido a que está hecho de forma estática.
+En base a lo analizado, creemos que el procesador que estamos usando para simular soporta mejores técnicas de optimización. Por esta razón podemos ver en el gráfico que el caso del código sin loop unrolling, la cantidad de hits es mayor para los casos del código con loop unrolling de 2, 4 y 8. De esta manera, deducimos que para el caso del código sin loop unrolling se está haciendo lo más óptimo posible, y en los otros no, debido a que está hecho de forma estática.
 
 ## Ejercicio 2
 
@@ -481,12 +484,12 @@ Observemos que en el gráfico la cantidad de ciclos simulados en 2, 4 y 8 vías 
 
 Analicemos esto en detalle:
 
-Por como es nuestro programa, estamos accediendo siempre por cada casilla del arreglo a las posiciones izquierda, derecha, arriba y abajo del arreglo, por esta razón simplemente nos alcanza con que la cache tenga en el mejor de los casos 3 bloques y en el peor de los casos 4 bloques, por lo que cada 8 iteraciones se harán miss, ya que una línea de cache tiene 64 bytes y las palabras de nuestro arreglo son de 8 bytes. Son 3 bloques porque necesitamos 1 bloque para la casilla de arriba, un bloque para la casilla de abajo y un bloque para la casilla de la izquierda y la derecha y en el peor de los casos un bloque para cada uno (i.e dos bloques), y como nos movemos secuencialmente en el arreglo también lo hacemos en los 3/4 bloques, es decir que accedemos alas palabras de los bloques de manera secuencial
+Por como es nuestro programa, estamos accediendo siempre por cada casilla del arreglo a las posiciones izquierda, derecha, arriba y abajo del arreglo, por esta razón simplemente nos alcanza con que la cache tenga en el mejor de los casos 3 bloques y en el peor de los casos 4 bloques, por lo que cada 8 iteraciones se harán miss, ya que una línea de cache tiene 64 bytes y las palabras de nuestro arreglo son de 8 bytes. Son 3 bloques porque necesitamos 1 bloque para la casilla de arriba, un bloque para la casilla de abajo y un bloque para la casilla de la izquierda y la derecha y en el peor de los casos un bloque para cada uno (i.e dos bloques), y como nos movemos secuencialmente en el arreglo también lo hacemos en los 3 o 4 bloques, es decir que accedemos a las palabras de los bloques de manera secuencial
 Los bloques pueden estar sobre una misma vía o pueden estar sobre vías distintas. Por esta razón, al dividir la cache en más vías, el comportamiento sigue siendo el mismo que una cache asociativa por conjuntos de dos vías.
 
-Como dijimos en un principio con las caches de 2, 4 y 8 vías, las cantidades de ciclos simulados son similirares debido a que tenemos siempre una cache de 32KB y aumentar la cantidad de vías reduce el tamaño de la cahce de cada vía, pero en el peor de los casos tendremos un tamaño de 32KB/8 = 4KB que es mayor al margen de lo que necesitamos.
+Como dijimos en un principio con las caches de 2, 4 y 8 vías, las cantidades de ciclos simulados son similirares debido a que tenemos siempre una cache de 32KB y aumentar la cantidad de vías reduce el tamaño de la cache de cada vía, pero en el peor de los casos tendremos un tamaño de 32KB/8 = 4KB que es mayor al margen de lo que necesitamos.
 
-Además como también estamos accediendo al arreglo original (x) y luego al arreglo temporal (x_temp), siempre tenemos que tener al menos dos vías para ver una mejora en cuanto ciclos.
+Además como también estamos accediendo al arreglo original (x) y luego al arreglo temporal (x_temp), siempre tenemos que tener al menos dos vías para ver una mejora en cuanto a ciclos.
 
 ![Ciclos de CPU en Stall](<stats/stats-ej2/ej2-c-img/Ciclos de CPU en Stall.png>)
 
@@ -498,8 +501,7 @@ Al igual que el gráfico de stalls, también podemos ver una correlación invers
 
 ![Dcache ReadReq Hits](<stats/stats-ej2/ej2-c-img/Dcache ReadReq Hits.png>)
 
-Comparando este gráfico con el anterior notamos una relación que nos permite identificar aproximadamente 5 lecturas y 2 de escrituras por cada casillas (teniendo en cuenta lo dos arreglos). Esto sería un 70% más de veces de hits de lectura que de escritura, algo que se relaciona con nuestro programa dado que por cada casilla que no es borde leemos las 4 casillas adyacentes y escribimos una vez el arreglo temporal.
-Luego se nos suma una escritura y una lectura por cada casilla dado que copiamos el arreglo temporal al arreglo original.
+Comparando este gráfico con el anterior notamos una relación que nos permite identificar aproximadamente 5 lecturas y 2 escrituras por cada casilla (teniendo en cuenta lo dos arreglos). Esto sería un 70% más de veces de hits de lectura que de escritura, algo que se relaciona con nuestro programa dado que por cada casilla que no es borde leemos las 4 casillas adyacentes y escribimos una vez el arreglo temporal. Luego se nos suma una escritura y una lectura por cada casilla dado que copiamos el arreglo temporal al arreglo original.
 
 ### Análisis de los predictores de saltos.
 
