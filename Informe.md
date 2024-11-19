@@ -625,3 +625,91 @@ Como se puede observar, el miss Rate sigue siendo el mismo tanto para el procesa
 ![Ciclos Simulados](<stats/stats-ej2/ej2-e-img/Ciclos Simulados.png>)
 
 Vale la pena destacar la cantidad de ciclos simulados según cada caso, en donde podemos observar una mejora abismal del procesador out-of-order frente al in-order, esto se debe a que aprovechamos al máximo la cantidad de instrucciones ejecutadas reduciendo significativamente la cantidad de stalls (tiempo de no hacer nada en el micro). También se puede observar que existe una mejora de un predictor local a uno por torneo en un procesador in-order, aunque la diferencia no se llega a notar en el gráfico, ésta es aproximadamente de 13.000 ciclos, y se debe a los casos de fallas por una mala predicción del predictor local.
+
+## Ejercicio 3
+
+En este ejercicio vamos a analizar como varían las distintas estadísticas y eficiencia, dependiendo del procesador que usemos ya sea in-roder o out-of-order.
+También cuanto mejora o empeora usando la técnica de eliminar saltos mediante una nueva instrucción la cual es `CSEL`.
+Previamente teníamos que hacer un algoritmo de oredenamiento, en este caso el de bubbleSort (ordenamiento por burbuja) y traducir este código a assembly.
+
+### Código del algoritmo de bubbleSort traducido.
+
+```arm
+MOV     X1, #0          // X1 = i
+MOV     X2, #0          // X2 = j
+SUB     X3, X0, #1      // X3 = (N - 1)
+
+loop_i:
+    CMP     X1, X3
+    B.GE    loop_i_end
+        MOV     X2, #0                          // j = 0
+        SUB     X4, X3, X1                      // X4 = N - i - 1 (límite para j)
+
+        loop_j:
+            CMP     X2, X4
+            B.GE    loop_j_end
+                LDR     X5, [X10, X2, LSL #3]   // arr[j]
+                ADD     X6, X2, #1
+                LDR     X7, [X10, X6, LSL #3]   // arr[j + 1]
+
+                CMP     X5, X7
+                B.LE    fail_if                 // Si arr[j] <= arr[j + 1], saltar intercambio
+
+                STR     X7, [X10, X2, LSL #3]   // arr[j] = arr[j + 1]
+                STR     X5, [X10, X6, LSL #3]   // arr[j + 1] = arr[j]
+
+            fail_if:
+                ADD     X2, X2, #1              // j++
+                B       loop_j
+
+        loop_j_end:
+            ADD     X1, X1, #1                  // i++
+            B       loop_i
+
+loop_i_end:
+```
+
+Y la siguiente parte es la que se modifica para usar la instrucción `CSEL` y evitar el salto con la etiqueta `fail_if`.
+
+```arm
+loop_j:
+            CMP     X2, X4
+            B.GE    loop_j_end
+                LDR     X5, [X10, X2, LSL #3]   // arr[j]
+                ADD     X6, X2, #1
+                LDR     X7, [X10, X6, LSL #3]   // arr[j + 1]
+
+                CMP     X5, X7                  // Compara arr[j] y arr[j + 1]
+                CSEL    X8, X5, X7, LE          // X8 = X5 si arr[j] <= arr[j+1] => (Es decir, no se hace nada.), X7 en caso contrario.
+                CSEL    X9, X7, X5, LE          // X9 = X7 si arr[j] <= arr[j+1] => (Es decir, no se hace nada.), X5 en caso contrario.
+
+                STR     X8, [X10, X2, LSL #3]   // arr[j] = arr[j + 1]
+                STR     X9, [X10, X6, LSL #3]   // arr[j + 1] = arr[j]
+
+                ADD     X2, X2, #1              // j++
+                B       loop_j
+
+        loop_j_end:
+```
+
+Ahora veamos como quedan los distintos gráficos que representan las estadísticas en los distintos casos.
+
+![Ciclos Simulados](<stats/stats-ej3-img/Ciclos SImulados.png>)
+
+Como podemos ver en esta gráfica, hay una clara diferencia entre el procesador in-order frente al out-of-order ya sea optimizado con `CSEL` o no (esto ya se explicó en el ejercicio 2). El otro aspecto a considerar es el cambio entre usar la nueva instrucción `CSEL`. Como se puede apreciar, existe una mejora significativa usando la instrucción `CSEL`, también se puede observar una mejora usando dicha instrucción en el porcesador out-of-order frente al in-order.
+
+Notar que en principio nuestra optimización provoca que hagamos `STR` independientemente si entramos en la guarda del `if` (i.e swapear los elementos), esto generaría que accedemos a la memoria en todas las iteraciones de los bucles. Parecería que esto deteriora el rendimiento porque el micro tendría que stollearse, pero lo que se ve en las gráficas es que esto no sucede. Por lo que deducimos que la cache logra detectar estos casos, en donde el dato a escribir es el mismo que ya está en cache, evitando de esta forma escribir en memoria (Aclarar algo no menor, siempre escribimos un dato en una posición que acabamos de leer).
+
+Analicemos ahora que está pasando con los stalls.
+
+![Ciclos de CPU en Stall](<stats/stats-ej3-img/Ciclos de CPU en Stall.png>)
+
+Dado que nuestro tamaño de arreglo es de 8192 bytes (i.e 1024 elementos de 8 bytes) y la línea de cache es de 64 bytes, es decir entran 8 elementos del arreglo en cada bloque de cache y accedemos de forma secuencial a ellos.
+Para el procesador in-order vamos a tener como mínimo `1024/8 = 205` miss de cache.
+
+Cosas a tener en cuenta:
+
+- Un miss no implica necesariamente un solo ciclo de stall. - Swapear dos elementos puede llegar a generar otro miss dependiendo del funcionamiento de la cache.
+- Tener en cuenta el error de GEM5 referido a la cantidad de ciclos en relación con los stall, que al haber una gran diferencia, puede haber errores.
+
+Por otra parte el out-of-order logra aprovechar los ciclos inactivos por sus optimizaciones, por lo que tiene sentido que sea menora la cantidad de stall.
