@@ -1,3 +1,6 @@
+casos cache de 32kB y 1 via
+procesador out-of-order
+
 simInsts                                                               5252999.0
 system.cpu_cluster.cpus.numCycles                                      6990241.0
 system.cpu_cluster.cpus.cpi                                            1.33

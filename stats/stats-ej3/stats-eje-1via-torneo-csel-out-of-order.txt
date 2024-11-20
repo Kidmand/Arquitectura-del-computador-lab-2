@@ -1,3 +1,6 @@
+casos cache de 32kB y 1 via, con csel
+procesador out-of-order
+
 simInsts                                                               6293509.0
 system.cpu_cluster.cpus.numCycles                                      5259493.0
 system.cpu_cluster.cpus.cpi                                            0.84
